@@ -7,6 +7,7 @@ import {Component, ViewChild, ElementRef} from '@angular/core';
 export class IntervalComponent {
     @ViewChild("canvas") canvas: ElementRef;
 
+    private width: number = 200;
     private height: number = 30;
 
     ngAfterViewInit() {
@@ -21,10 +22,10 @@ export class IntervalComponent {
         context.lineTo(halfLineWidth, this.height);
 
         context.moveTo(halfLineWidth, this.height / 2);
-        context.lineTo(this.width - halfLineWidth, this.height / 2);
+        context.lineTo(nativeCanvas.width - halfLineWidth, this.height / 2);
 
-        context.moveTo(this.width - halfLineWidth, 0);
-        context.lineTo(this.width - halfLineWidth, this.height);
+        context.moveTo(nativeCanvas.width - halfLineWidth, 0);
+        context.lineTo(nativeCanvas.width - halfLineWidth, this.height);
         context.stroke();
     }
 }
