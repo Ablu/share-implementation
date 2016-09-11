@@ -1,2 +1,7 @@
-.idea/workspace.xml
+workspace.xml
 out/
+*.js
+*.map
+typings
+node_modules
+*.log
