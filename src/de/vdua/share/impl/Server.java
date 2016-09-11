@@ -1,8 +1,12 @@
 package de.vdua.share.impl;
 
-import de.vdua.share.impl.entities.Interval;
+import de.vdua.share.impl.entities.DataEntity;
+import de.vdua.share.impl.mappings.ConsistentHashMap;
+import de.vdua.share.impl.mappings.FinalMappingFactory;
+import de.vdua.share.impl.mappings.StorageNodeCHMFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by postm on 17-Aug-16.
@@ -11,6 +15,8 @@ public class Server {
 
     private HashSet<StorageNode> storageNodes = new HashSet<StorageNode>();
     private double stretchFactor;
+
+    private ConsistentHashMap<ConsistentHashMap<StorageNode>> nodeMapping;
 
     public Server(double stretchFactor) {
         this.stretchFactor = stretchFactor;
@@ -27,38 +33,8 @@ public class Server {
             return false;
         //Update capacities
         capacities.forEach((storageNode, capacity) -> storageNode.setCapacity(capacity));
-        //Determine intervals
-        ArrayList<Interval> intervals = genIntervals();
-
-
+        updateMapping();
         return true;
-    }
-
-    private TreeSet<Double> genIntervalBorders() {
-        TreeSet<Double> intervalBorders = new TreeSet<Double>((d1, d2) -> d1.compareTo(d2));
-        for (StorageNode node : storageNodes) {
-            for (Interval i : node.getIntervals()) {
-                intervalBorders.add(i.getStart());
-                intervalBorders.add(i.getEnd());
-            }
-        }
-        return intervalBorders;
-    }
-
-    private ArrayList<Interval> genIntervals() {
-        double lastBorder = 0;
-        TreeSet<Double> borders =genIntervalBorders();
-        //Assure that 0.0 is remove as lastBorder covers that side of the interval.
-        borders.remove(0.0);
-        //Assure that 1.0 is present so that side of the interval is covert.
-        //borders is a Set so multiples are not an issue.
-        borders.add(1.0);
-        ArrayList<Interval> intervals = new ArrayList<Interval>(borders.size()+1);
-        for (Double nextBorder : borders) {
-            intervals.add(new Interval(lastBorder, nextBorder));
-            lastBorder = nextBorder;
-        }
-        return intervals;
     }
 
     public synchronized StorageNode addStorageNode() {
@@ -70,11 +46,22 @@ public class Server {
     public synchronized void setStretchFactor(double stretchFactor) {
         this.stretchFactor = stretchFactor;
         storageNodes.forEach(storageNode -> storageNode.updateInterval());
+        updateMapping();
+    }
+
+    private void updateMapping() {
+        boolean useVerification = false;
+        FinalMappingFactory factory = new FinalMappingFactory(new StorageNodeCHMFactory(this.storageNodes, useVerification), useVerification);
+        this.nodeMapping = factory.createConsistentHashMap();
     }
 
     public double getStretchFactor() {
         return stretchFactor;
     }
 
+    public void storeData(DataEntity entity) {
+        StorageNode responsibleNode = this.nodeMapping.getElement(entity).getElement(entity);
+        responsibleNode.storeData(entity);
+    }
 
 }
