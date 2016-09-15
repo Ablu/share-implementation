@@ -17,6 +17,6 @@ export class ShareService {
     }
 
     onMessage(message: MessageEvent) {
-        console.log(message);
+        console.log(JSON.parse(message.data));
     }
 }
