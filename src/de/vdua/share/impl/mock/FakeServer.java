@@ -38,7 +38,7 @@ public class FakeServer implements Server {
 
     @Override
     public double getStretchFactor() {
-        return 0;
+        return 0.5;
     }
 
     @Override
