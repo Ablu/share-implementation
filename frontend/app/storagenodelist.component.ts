@@ -11,10 +11,11 @@ import setInterval = core.setInterval;
     }
 `],
     template: `
-    <interval
-        *ngFor="let interval of storageNodes"
-        (width)="(interval.end - interval.start) * 100"
-        ></interval>
+    <div *ngFor="let storageNode of storageNodes">
+        <storage-node [storageNode]="storageNode"></storage-node>
+    </div>
+    
+    <input type="submit" />
 `,
 })
 export class StorageNodeListComponent {

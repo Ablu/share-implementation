@@ -1,14 +1,14 @@
-import {Component, ViewChild, ElementRef} from '@angular/core';
+import {Component, ViewChild, ElementRef, Input} from '@angular/core';
+import {Interval} from "./entities/interval";
 
 @Component({
     selector: 'interval',
-    template: `<canvas #canvas [width]="width" [height]="height"></canvas>`
+    template: `<canvas #canvas width="200" height="30"></canvas>`
 })
 export class IntervalComponent {
     @ViewChild("canvas") canvas: ElementRef;
 
-    public width: number = 200;
-    public height: number = 30;
+    @Input() public interval: Interval;
 
     ngAfterViewInit() {
         let nativeCanvas: HTMLCanvasElement = this.canvas.nativeElement;
@@ -18,17 +18,18 @@ export class IntervalComponent {
         context.lineWidth = 4;
 
         var halfLineWidth = context.lineWidth / 2;
-        context.moveTo(halfLineWidth, 0);
-        context.lineTo(halfLineWidth, this.height);
+        if (this.interval.start > 0) {
+            context.moveTo(this.interval.start * nativeCanvas.width + halfLineWidth, 0);
+            context.lineTo(this.interval.start * nativeCanvas.width + halfLineWidth, nativeCanvas.height);
+        }
 
-        context.moveTo(halfLineWidth, this.height / 2);
-        context.lineTo(nativeCanvas.width - halfLineWidth, this.height / 2);
+        context.moveTo(this.interval.start * nativeCanvas.width + halfLineWidth, nativeCanvas.height / 2);
+        context.lineTo(this.interval.end * nativeCanvas.width - halfLineWidth, nativeCanvas.height / 2);
 
-        context.moveTo(nativeCanvas.width - halfLineWidth, 0);
-        context.lineTo(nativeCanvas.width - halfLineWidth, this.height);
+        if (this.interval.end < 1) {
+            context.moveTo(this.interval.end * nativeCanvas.width - halfLineWidth, 0);
+            context.lineTo(this.interval.end * nativeCanvas.width - halfLineWidth, nativeCanvas.height);
+        }
         context.stroke();
-        
-        
-        console.log(this.width);
     }
 }

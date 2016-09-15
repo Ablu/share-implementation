@@ -7,6 +7,7 @@
     var map = {
         'app':                        'app', // 'dist',
         '@angular':                   'node_modules/@angular',
+        '@angular2-material':         'node_modules/@angular2-material',
         'angular2-in-memory-web-api': 'node_modules/angular2-in-memory-web-api',
         'rxjs':                       'node_modules/rxjs',
         'ng2-charts':                 'node_modules/ng2-charts/',
@@ -30,6 +31,23 @@
         'router-deprecated',
         'upgrade',
     ];
+    /** Angular Material 2 Components */
+    var components = [
+        'slider',
+    ];
+
+    /**Generate Mappings and Packages from specified packages. */
+    components.forEach(function (name) {
+       // map["@angular2-material/" + name] = "components/" + name;
+    });
+
+    components.forEach(function (name) {
+        // packages[("@angular2-material/" + name)] = {
+        //     main: name ,
+        //     defaultExtension: 'js'
+        // };
+    });
+
     // Individual files (~300 requests):
     function packIndex(pkgName) {
         packages['@angular/'+pkgName] = { main: 'index.js', defaultExtension: 'js' };
