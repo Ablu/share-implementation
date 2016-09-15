@@ -42,7 +42,7 @@ public class StorageNode extends AbstractEntity {
     }
 
     private Interval genInterval(double capacity, double stretchFactor) {
-        double hash = this.hashCode() / Integer.MAX_VALUE; //TODO use other hashing mechanic
+        double hash = (double) this.hashCode() / Integer.MAX_VALUE; //TODO use other hashing mechanic
         System.err.println("genInterval hash=" + hash);
         return new Interval(hash, hash + (stretchFactor * capacity));
     }
