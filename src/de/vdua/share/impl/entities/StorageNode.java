@@ -38,7 +38,7 @@ public class StorageNode extends AbstractEntity {
     }
 
     public void updateInterval(double stretchFactor) {
-        devideInterval(genInterval(capacity, stretchFactor));
+        this.intervals = devideInterval(genInterval(capacity, stretchFactor));
     }
 
     private Interval genInterval(double capacity, double stretchFactor) {
