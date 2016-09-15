@@ -2,6 +2,7 @@ package de.vdua.share.impl.entities;
 
 import de.vdua.share.impl.interfaces.Server;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class StorageNode extends AbstractEntity {
 
     private final int id;
     private double capacity;
-    private List<Interval> intervals;
+    private List<Interval> intervals = new ArrayList<>();
 
     public StorageNode(double capacity, double stretchFactor) {
         this.id = getNextId(StorageNode.class);
