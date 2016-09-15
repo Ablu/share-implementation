@@ -1,7 +1,9 @@
 package de.vdua.share.impl.main;
 
+import de.vdua.share.impl.Server;
 import de.vdua.share.impl.api.interfaces.Api;
 import de.vdua.share.impl.api.websocket.WebsocketApi;
+import de.vdua.share.impl.mock.FakeServer;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -9,7 +11,8 @@ import java.net.UnknownHostException;
 public class Main {
     public static void main(String args[]) throws UnknownHostException {
         InetSocketAddress address = new InetSocketAddress(9456);
-        Api api = new WebsocketApi(address);
+        Server server = new FakeServer();
+        Api api = new WebsocketApi(address, server);
         api.initalize();
     }
 }

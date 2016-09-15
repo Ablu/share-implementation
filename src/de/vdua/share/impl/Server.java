@@ -1,6 +1,7 @@
 package de.vdua.share.impl;
 
 import de.vdua.share.impl.entities.DataEntity;
+import de.vdua.share.impl.entities.StorageNode;
 import de.vdua.share.impl.mappings.ConsistentHashMap;
 import de.vdua.share.impl.mappings.FinalMappingFactory;
 import de.vdua.share.impl.mappings.StorageNodeCHMFactory;
@@ -11,7 +12,7 @@ import java.util.HashSet;
 /**
  * Created by postm on 17-Aug-16.
  */
-public class Server {
+public class Server implements de.vdua.share.impl.interfaces.Server {
 
     private HashSet<StorageNode> storageNodes = new HashSet<StorageNode>();
     private double stretchFactor;
@@ -24,6 +25,7 @@ public class Server {
 
     //Expose manipulation methods
 
+    @Override
     public synchronized boolean changeCapacities(HashMap<StorageNode, Double> capacities) {
         //Check invariant
         double totalCapacity = 0;
@@ -37,12 +39,19 @@ public class Server {
         return true;
     }
 
+    @Override
     public synchronized StorageNode addStorageNode() {
         StorageNode newNode = new StorageNode(0.0, this);
         storageNodes.add(newNode);
         return newNode;
     }
 
+    @Override
+    public HashSet<StorageNode> getStorageNodes() {
+        return storageNodes;
+    }
+
+    @Override
     public synchronized void setStretchFactor(double stretchFactor) {
         this.stretchFactor = stretchFactor;
         storageNodes.forEach(storageNode -> storageNode.updateInterval());
@@ -55,10 +64,12 @@ public class Server {
         this.nodeMapping = factory.createConsistentHashMap();
     }
 
+    @Override
     public double getStretchFactor() {
         return stretchFactor;
     }
 
+    @Override
     public void storeData(DataEntity entity) {
         StorageNode responsibleNode = this.nodeMapping.getElement(entity).getElement(entity);
         responsibleNode.storeData(entity);

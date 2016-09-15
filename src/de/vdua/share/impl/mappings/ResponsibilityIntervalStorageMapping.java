@@ -1,6 +1,6 @@
 package de.vdua.share.impl.mappings;
 
-import de.vdua.share.impl.StorageNode;
+import de.vdua.share.impl.entities.StorageNode;
 import de.vdua.share.impl.entities.Interval;
 import de.vdua.share.impl.entities.Tuple;
 

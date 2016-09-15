@@ -5,6 +5,7 @@ import de.vdua.share.impl.entities.StateEntity;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.vdua.share.impl.interfaces.Server;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -17,9 +18,11 @@ import java.util.Collection;
 public class WebsocketApi extends WebSocketServer implements Api {
     private Collection<WebSocket> clientConnections = new ArrayList<>();
     private Gson gson = new GsonBuilder().create();
+    private Server server;
 
-    public WebsocketApi(InetSocketAddress bindAddress) throws UnknownHostException {
+    public WebsocketApi(InetSocketAddress bindAddress, Server server) throws UnknownHostException {
         super(bindAddress);
+        this.server = server;
     }
 
     @Override

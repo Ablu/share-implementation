@@ -1,8 +1,6 @@
-package de.vdua.share.impl;
+package de.vdua.share.impl.entities;
 
-import de.vdua.share.impl.entities.AbstractEntity;
-import de.vdua.share.impl.entities.DataEntity;
-import de.vdua.share.impl.entities.Interval;
+import de.vdua.share.impl.interfaces.Server;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +56,7 @@ public class StorageNode extends AbstractEntity {
         return capacity;
     }
 
-    void setCapacity(double capacity) {
+    public void setCapacity(double capacity) {
         this.capacity = capacity;
         this.updateInterval();
     }
