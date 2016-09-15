@@ -34,14 +34,14 @@ public class Server implements de.vdua.share.impl.interfaces.Server {
         if (totalCapacity != 1.0)
             return false;
         //Update capacities
-        capacities.forEach((storageNode, capacity) -> storageNode.setCapacity(capacity));
+        capacities.forEach((storageNode, capacity) -> storageNode.setCapacity(capacity, getStretchFactor()));
         updateMapping();
         return true;
     }
 
     @Override
     public synchronized StorageNode addStorageNode() {
-        StorageNode newNode = new StorageNode(0.0, this);
+        StorageNode newNode = new StorageNode(0.0, getStretchFactor());
         storageNodes.add(newNode);
         return newNode;
     }
@@ -54,7 +54,7 @@ public class Server implements de.vdua.share.impl.interfaces.Server {
     @Override
     public synchronized void setStretchFactor(double stretchFactor) {
         this.stretchFactor = stretchFactor;
-        storageNodes.forEach(storageNode -> storageNode.updateInterval());
+        storageNodes.forEach(storageNode -> storageNode.updateInterval(stretchFactor));
         updateMapping();
     }
 

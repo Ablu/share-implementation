@@ -12,14 +12,12 @@ public class StorageNode extends AbstractEntity {
 
     private final int id;
     private double capacity;
-    private Server server;
     private List<Interval> intervals;
 
-    public StorageNode(double capacity, Server server) {
+    public StorageNode(double capacity, double stretchFactor) {
         this.id = getNextId(StorageNode.class);
         this.capacity = capacity;
-        this.server = server;
-        this.updateInterval();
+        this.updateInterval(stretchFactor);
     }
 
     private static List<Interval> devideInterval(Interval initialInterval) {
@@ -38,14 +36,14 @@ public class StorageNode extends AbstractEntity {
         System.out.println("StorageNode.storeData: id=" + id + " data={id=" + data.getId() + ", object=" + data.getData() + "}");
     }
 
-    public void updateInterval() {
-        devideInterval(genInterval(capacity, server.getStretchFactor()));
+    public void updateInterval(double stretchFactor) {
+        devideInterval(genInterval(capacity, stretchFactor));
     }
 
     private Interval genInterval(double capacity, double stretchFactor) {
         double hash = this.hashCode() / Integer.MAX_VALUE; //TODO use other hashing mechanic
         System.err.println("genInterval hash=" + hash);
-        return new Interval(hash, hash + (server.getStretchFactor() * capacity));
+        return new Interval(hash, hash + (stretchFactor * capacity));
     }
 
     public int getId() {
@@ -56,9 +54,9 @@ public class StorageNode extends AbstractEntity {
         return capacity;
     }
 
-    public void setCapacity(double capacity) {
+    public void setCapacity(double capacity, double stretchFactor) {
         this.capacity = capacity;
-        this.updateInterval();
+        this.updateInterval(stretchFactor);
     }
 
     public List<Interval> getIntervals() {

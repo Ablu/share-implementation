@@ -12,8 +12,8 @@ public class FakeServer implements Server {
 
     public FakeServer() {
         storageNodes = new HashSet<>();
-        storageNodes.add(new StorageNode(1.0, this));
-        storageNodes.add(new StorageNode(1.0, this));
+        storageNodes.add(new StorageNode(1.0, getStretchFactor()));
+        storageNodes.add(new StorageNode(1.0, getStretchFactor()));
     }
 
     @Override
