@@ -37,14 +37,23 @@ public class WebsocketApi extends WebSocketServer implements Api {
 
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
-        System.out.println("on open");
-        clientConnections.add(webSocket);
+        try {
+            System.out.println("on open");
+            clientConnections.add(webSocket);
+            webSocket.send(gson.toJson(server.getStorageNodes()));
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
     @Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
-        System.out.println("on close");
-        clientConnections.remove(webSocket);
+        try {
+            System.out.println("on close");
+            clientConnections.remove(webSocket);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
     @Override
