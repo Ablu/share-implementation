@@ -1,7 +1,6 @@
 package de.vdua.share.impl.api.websocket;
 
 import de.vdua.share.impl.api.interfaces.Api;
-import de.vdua.share.impl.entities.StateEntity;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,11 +27,6 @@ public class WebsocketApi extends WebSocketServer implements Api {
     @Override
     public void initalize() {
         start();
-    }
-
-    @Override
-    public void notifyClientsAboutUpdate(StateEntity state) {
-        broadcast(state);
     }
 
     private void broadcast(Object message) {
