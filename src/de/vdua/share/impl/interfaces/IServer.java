@@ -6,7 +6,7 @@ import de.vdua.share.impl.entities.DataEntity;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public interface Server {
+public interface IServer {
     boolean changeCapacities(HashMap<StorageNode, Double> capacities);
 
     StorageNode addStorageNode();

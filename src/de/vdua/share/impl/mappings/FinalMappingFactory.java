@@ -47,6 +47,11 @@ public class FinalMappingFactory extends ConsistentHashMapFactory<ConsistentHash
             finalMappedNodes[0] = finalMappedNodes[possibleNodes.size() - 1];
             //Construct final mapping
             ConsistentHashMapFactory<StorageNode> secondMappingFactory = new ConsistentHashMapFactory<>(useVerification);
+            if(secondLvlIntervals.length != finalMappedNodes.length){
+                int test = 0;
+                test++;
+            }
+
             for (int j = 0; j < secondLvlIntervals.length; j++) {
                 secondMappingFactory.addMapping(secondLvlIntervals[j], finalMappedNodes[j]);
             }

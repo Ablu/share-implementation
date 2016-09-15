@@ -1,5 +1,7 @@
 package de.vdua.share.impl.entities;
 
+import sun.plugin.javascript.navig.Array;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.SortedSet;
@@ -40,7 +42,29 @@ public class Interval {
     }
 
     public boolean contains(Interval i) {
-        return (i.getStart() > this.start || (this.start == i.getStart() && this.includeStart)) && (i.getEnd() < this.end || (this.end == i.getEnd() && this.includeEnd));
+        boolean startIsIncluded = false;
+        if (this.includeStart) {
+            startIsIncluded = i.getStart() >= this.start;
+        } else {
+            if (i.isIncludeStart()) {
+                startIsIncluded = i.getStart() > this.start;
+            } else {
+                startIsIncluded = i.getStart() >= this.start;
+            }
+        }
+
+        boolean endIsIncluded = false;
+        if (this.includeEnd) {
+            endIsIncluded = i.getEnd() <= this.end;
+        } else {
+            if (i.isIncludeEnd()) {
+                endIsIncluded = i.getEnd() < this.end;
+            } else {
+                endIsIncluded = i.getEnd() <= this.end;
+            }
+        }
+
+        return startIsIncluded && endIsIncluded;
     }
 
     public boolean intersects(Interval i) {
@@ -58,36 +82,51 @@ public class Interval {
     public SortedSet<Integer> getAllContainedIntervals(Interval[] probedIntervals) {
         TreeSet<Integer> contained = new TreeSet<Integer>();
 
-        int mid = ((probedIntervals.length) / 2) + 1;//TODO maybe change the entrypoint for the search
-
-        if (this.contains(probedIntervals[mid])) {
-            //We hit an intrval within this interval.
-            //-> consume intervals to both sides until we dont hit anymore
-            contained.addAll(getAllIntervalInDirection(1, mid, probedIntervals));
-            contained.addAll(getAllIntervalInDirection(-1, mid, probedIntervals));
-        } else {
-            //We didnt hit an interval within this interval.
-            //-> probe to both sides until we hit in one direction
-            //After that consume until we dont hit anymore
-            int searchDirection = 1;
-            Interval probe;
-            int i = 1;
-            for (; i <= mid - 1; i++) {
-                probe = probedIntervals[mid + (i * searchDirection)];
-                if (this.contains(probe)) {
-                    break;
-                } else {
-                    searchDirection = -1;
-                }
-                probe = probedIntervals[mid + (i * searchDirection)];
-                if (this.contains(probe)) {
-                    break;
-                } else {
-                    searchDirection = 1;
-                }
+        for (int i = 0; i < probedIntervals.length; i++) {
+            if (this.contains(probedIntervals[i])) {
+                contained.add(i);
             }
-            contained.addAll(getAllIntervalInDirection(searchDirection, mid + (i * searchDirection), probedIntervals));
         }
+
+//        int mid = (probedIntervals.length) / 2;//TODO maybe change the entrypoint for the search
+//
+//        if (this.contains(probedIntervals[mid])) {
+//            //We hit an interval within this interval.
+//            //-> consume intervals to both sides until we dont hit anymore
+//            contained.addAll(getAllIntervalInDirection(1, mid, probedIntervals));
+//            contained.addAll(getAllIntervalInDirection(-1, mid, probedIntervals));
+//        } else {
+//            //We didnt hit an interval within this interval.
+//            //-> probe to both sides until we hit in one direction
+//            //After that consume until we dont hit anymore
+//            int searchDirection = 1;
+//            Interval probe;
+//            int i = 1;
+//            for (; i <= mid - 1; i++) {
+//                probe = null;
+//                try{
+//                    probe = probedIntervals[mid + (i * searchDirection)];
+//                }catch(ArrayIndexOutOfBoundsException e){}
+//
+//                if (probe != null && this.contains(probe)) {
+//                    break;
+//                } else {
+//                    searchDirection = -1;
+//                }
+//
+//                probe = null;
+//                try{
+//                    probe = probedIntervals[mid + (i * searchDirection)];
+//                }catch(ArrayIndexOutOfBoundsException e){}
+//
+//                if (probe != null && this.contains(probe)) {
+//                    break;
+//                } else {
+//                    searchDirection = 1;
+//                }
+//            }
+//            contained.addAll(getAllIntervalInDirection(searchDirection, mid + (i * searchDirection), probedIntervals));
+//        }
 
         return contained;
     }

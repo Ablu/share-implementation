@@ -1,7 +1,5 @@
 package de.vdua.share.impl.entities;
 
-import de.vdua.share.impl.interfaces.Server;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
