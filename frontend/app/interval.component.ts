@@ -2,13 +2,13 @@ import {Component, ViewChild, ElementRef} from '@angular/core';
 
 @Component({
     selector: 'interval',
-    template: `hi2 <canvas #canvas [width]="width" [height]="height"></canvas>`
+    template: `<canvas #canvas [width]="width" [height]="height"></canvas>`
 })
 export class IntervalComponent {
     @ViewChild("canvas") canvas: ElementRef;
 
-    private width: number = 200;
-    private height: number = 30;
+    public width: number = 200;
+    public height: number = 30;
 
     ngAfterViewInit() {
         let nativeCanvas: HTMLCanvasElement = this.canvas.nativeElement;
@@ -27,5 +27,8 @@ export class IntervalComponent {
         context.moveTo(nativeCanvas.width - halfLineWidth, 0);
         context.lineTo(nativeCanvas.width - halfLineWidth, this.height);
         context.stroke();
+        
+        
+        console.log(this.width);
     }
 }

@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import {IntervalView} from './intervalview.component'
+import {StorageNodeListComponent} from './storagenodelist.component'
 
 
 @Component({
     selector: 'my-app',
-    directives: [IntervalView],
     template: `
-    <interval-view></interval-view>
+    <storage-node-list></storage-node-list>
   `
 })
 export class AppComponent {
