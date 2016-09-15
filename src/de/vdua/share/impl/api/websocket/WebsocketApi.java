@@ -42,7 +42,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
             clientConnections.add(webSocket);
             webSocket.send(gson.toJson(server.getStorageNodes()));
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println(e.getMessage());
         }
     }
 
@@ -52,7 +52,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
             System.out.println("on close");
             clientConnections.remove(webSocket);
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println(e.getMessage());
         }
     }
 
