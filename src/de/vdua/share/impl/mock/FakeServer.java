@@ -12,8 +12,8 @@ public class FakeServer implements IServer {
 
     public FakeServer() {
         storageNodes = new HashSet<>();
-        storageNodes.add(new StorageNode(1.0, getStretchFactor()));
-        storageNodes.add(new StorageNode(1.0, getStretchFactor()));
+        storageNodes.add(new StorageNode(0.5, getStretchFactor()));
+        storageNodes.add(new StorageNode(0.5, getStretchFactor()));
     }
 
     @Override
