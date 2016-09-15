@@ -16,9 +16,18 @@ export class ShareService {
     
     private storageNodeUpdated = new Subject<StorageNode>();
     storageNodeUpdatedSource$ = this.storageNodeUpdated.asObservable();
-    
-    
+
     constructor() {
+        this.createWebsocketConnection();
+        setInterval(() => {
+            if (this.websocket.readyState == this.websocket.CLOSED) {
+                this.createWebsocketConnection();
+                console.log('reconnecting ws channel');
+            }
+        }, 1000)
+    }
+
+    private createWebsocketConnection() {
         this.websocket = new WebSocket('ws://localhost:9456/');
         this.websocket.addEventListener('message', (message) => {
             this.onMessage(message);
