@@ -38,7 +38,7 @@ export class ShareService {
             }
         }
 
-        for (let id of this.storageNodes.keys()) {
+        for (let id of Array.from(this.storageNodes.keys())) {
             let exists = receivedStorageNodes.filter(node => node.id == id).length > 0;
             if (!exists) {
                 this.storageNodeDeleted.next(this.storageNodes[id]);
