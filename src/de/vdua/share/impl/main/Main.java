@@ -1,8 +1,8 @@
 package de.vdua.share.impl.main;
 
-import de.vdua.share.impl.Server;
 import de.vdua.share.impl.api.interfaces.Api;
 import de.vdua.share.impl.api.websocket.WebsocketApi;
+import de.vdua.share.impl.interfaces.Server;
 import de.vdua.share.impl.mock.FakeServer;
 
 import java.net.InetSocketAddress;
