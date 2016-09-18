@@ -72,4 +72,11 @@ export class ShareService {
             data: data,
         })
     }
+
+    public updateCapacities(capacities) {
+        this.send({
+            command: 'updateCapacities',
+            capacities: capacities,
+        })
+    }
 }

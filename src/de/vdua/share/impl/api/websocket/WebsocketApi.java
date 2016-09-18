@@ -6,6 +6,7 @@ import de.vdua.share.impl.api.interfaces.Api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.vdua.share.impl.entities.DataEntity;
+import de.vdua.share.impl.entities.StorageNode;
 import de.vdua.share.impl.interfaces.IServer;
 import de.vdua.share.impl.interfaces.IServerListener;
 import org.java_websocket.WebSocket;
@@ -16,6 +17,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 public class WebsocketApi extends WebSocketServer implements Api {
     private Collection<WebSocket> clientConnections = new ArrayList<>();
@@ -64,6 +66,15 @@ public class WebsocketApi extends WebSocketServer implements Api {
         }
     }
 
+    private StorageNode getStorageNodeById(int id) {
+        for (StorageNode node : server.getStorageNodes()) {
+            if (node.getId() == id) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void onMessage(WebSocket webSocket, String s) {
         try {
@@ -79,6 +90,18 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     String data = (String) message.get("data");
                     System.out.println("Storing data '" + data + "'!");
                     server.storeData(new DataEntity(data));
+                    break;
+                case "updateCapacities":
+                    ArrayList<LinkedTreeMap> capacities = (ArrayList<LinkedTreeMap>) message.get("capacities");
+                    System.out.println("Updating capacities: " + capacities);
+
+                    HashMap<StorageNode, Double> newCapacities = new HashMap<>();
+                    for (LinkedTreeMap capacity : capacities) {
+                        int id = ((Double) capacity.get("id")).intValue();
+                        double newCapacity = (double) capacity.get("capacity");
+                        newCapacities.put(getStorageNodeById(id), newCapacity);
+                    }
+                    server.changeCapacities(newCapacities);
                     break;
             }
 

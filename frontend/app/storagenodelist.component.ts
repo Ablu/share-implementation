@@ -1,6 +1,7 @@
 import {Component, ViewChild, ElementRef} from '@angular/core';
 import {ShareService} from "./share.service";
 import setInterval = core.setInterval;
+import {StorageNode} from "./entities/storagenode";
 
 @Component({
     selector: 'storage-node-list',
@@ -15,11 +16,12 @@ import setInterval = core.setInterval;
         <storage-node [storageNode]="storageNode"></storage-node>
     </div>
     
+    <input type="submit" value="Update capacities" (click)="updateCapacities()"/>
     <input type="submit" value="Add Storage Node" (click)="createStorageNode()"/>
 `,
 })
 export class StorageNodeListComponent {
-    private storageNodes = [];
+    private storageNodes: StorageNode[] = [];
 
     constructor(private shareService: ShareService) {
         shareService.storageNodeAddedSource$.subscribe(storageNode => {
@@ -41,6 +43,22 @@ export class StorageNodeListComponent {
                 }
             }
         });
+    }
+
+    private updateCapacities() {
+        let capacitySum = 0;
+        for (let node: StorageNode of this.storageNodes) {
+            capacitySum += +node.capacity;
+        }
+
+        var newCapacities = [];
+        for (let node: StorageNode of this.storageNodes) {
+            newCapacities.push({
+                id: node.id,
+                capacity: node.capacity / capacitySum,
+            });
+        }
+        this.shareService.updateCapacities(newCapacities);
     }
 
     private createStorageNode() {

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {StorageNode} from "./entities/storagenode";
 
 
@@ -24,20 +24,17 @@ import {StorageNode} from "./entities/storagenode";
         </div>
         <div class="metadata">
             <h1>Node {{storageNode.id}}</h1>
-            Capacity: <input #slider type="range" [(ngModel)]="modifiedCapacity" name="modifiedCapacity"/>
+            Capacity:
+            <input #slider type="range" max="1" step="0.0001"
+                [(ngModel)]="storageNode.capacity" name="storageNode.capacity"
+                />
         </div>
         <div class="floatStop"></div>
-`
-})
-export class StorageNodeComponent implements OnInit {
+`})
+export class StorageNodeComponent {
     @Input() public storageNode: StorageNode;
-    public modifiedCapacity: number = 0.0;
 
     constructor() {
-    }
-
-    ngOnInit() {
-        this.modifiedCapacity = this.storageNode.capacity * 100;
     }
 }
 
