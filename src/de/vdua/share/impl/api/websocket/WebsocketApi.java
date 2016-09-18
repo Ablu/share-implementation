@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class WebsocketApi extends WebSocketServer implements Api, IServerListener{
+public class WebsocketApi extends WebSocketServer implements Api {
     private Collection<WebSocket> clientConnections = new ArrayList<>();
     private Gson gson = new GsonBuilder().create();
     private IServer server;
@@ -23,7 +23,7 @@ public class WebsocketApi extends WebSocketServer implements Api, IServerListene
     public WebsocketApi(InetSocketAddress bindAddress, IServer server) throws UnknownHostException {
         super(bindAddress);
         this.server = server;
-        server.addServerListener(this);
+        server.addServerListener(eventServer -> broadcast(eventServer.getStorageNodes()));
     }
 
     @Override
@@ -66,10 +66,5 @@ public class WebsocketApi extends WebSocketServer implements Api, IServerListene
     @Override
     public void onError(WebSocket webSocket, Exception e) {
         System.out.println("on error");
-    }
-
-    @Override
-    public void onMappingUpdate(IServer eventServer) {
-        broadcast(eventServer.getStorageNodes());
     }
 }
