@@ -65,4 +65,11 @@ export class ShareService {
             command: 'addStorageNode',
         });
     }
+
+    public storeData(data: string) {
+        this.send({
+            command: 'storeData',
+            data: data,
+        })
+    }
 }

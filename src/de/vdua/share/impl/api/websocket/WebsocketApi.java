@@ -5,6 +5,7 @@ import de.vdua.share.impl.api.interfaces.Api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.vdua.share.impl.entities.DataEntity;
 import de.vdua.share.impl.interfaces.IServer;
 import de.vdua.share.impl.interfaces.IServerListener;
 import org.java_websocket.WebSocket;
@@ -73,6 +74,11 @@ public class WebsocketApi extends WebSocketServer implements Api {
                 case "addStorageNode":
                     System.out.println("Adding storage node!");
                     server.addStorageNode();
+                    break;
+                case "storeData":
+                    String data = (String) message.get("data");
+                    System.out.println("Storing data '" + data + "'!");
+                    server.storeData(new DataEntity(data));
                     break;
             }
 

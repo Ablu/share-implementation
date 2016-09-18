@@ -15,7 +15,7 @@ import setInterval = core.setInterval;
         <storage-node [storageNode]="storageNode"></storage-node>
     </div>
     
-    <input type="submit" value="Add Storage Node" (click)="onSubmit()"/>
+    <input type="submit" value="Add Storage Node" (click)="createStorageNode()"/>
 `,
 })
 export class StorageNodeListComponent {
@@ -43,7 +43,7 @@ export class StorageNodeListComponent {
         });
     }
 
-    private onSubmit() {
+    private createStorageNode() {
         this.shareService.addStorageNode();
     }
 }
