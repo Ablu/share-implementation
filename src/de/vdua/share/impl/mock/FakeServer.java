@@ -2,12 +2,13 @@ package de.vdua.share.impl.mock;
 
 import de.vdua.share.impl.entities.StorageNode;
 import de.vdua.share.impl.entities.DataEntity;
+import de.vdua.share.impl.interfaces.AbstractServer;
 import de.vdua.share.impl.interfaces.IServer;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class FakeServer implements IServer {
+public class FakeServer extends AbstractServer implements IServer {
     private final HashSet<StorageNode> storageNodes;
 
     public FakeServer() {

@@ -1,7 +1,5 @@
 package de.vdua.share.impl.entities;
 
-import sun.plugin.javascript.navig.Array;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.SortedSet;
