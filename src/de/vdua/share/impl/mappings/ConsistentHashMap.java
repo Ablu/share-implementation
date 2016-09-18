@@ -20,7 +20,7 @@ public class ConsistentHashMap<E> {
     ConsistentHashMap(Interval[] intervals, E[] mappedElements, LinkedList<Integer>[] array) {
         this.intervals = intervals;
         this.mappedElements = mappedElements;
-        this.inverseSize = 1 / mappedElements.length;
+        this.inverseSize = 1 / (double) mappedElements.length;
         this.array = array;
     }
 

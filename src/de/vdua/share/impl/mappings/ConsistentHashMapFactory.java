@@ -31,12 +31,12 @@ public class ConsistentHashMapFactory<E> {
 
     private LinkedList<Integer>[] createArray(Interval[] intervals) {
         LinkedList<Integer>[] array = new LinkedList[intervals.length];
-        double inverseSize = 1 / intervals.length;
+        double inverseSize = 1 / (double) intervals.length;
         for (int i = 0; i < intervals.length; i++) {
             array[i] = new LinkedList<>();
             Interval arrayInterval = new Interval(i * inverseSize, (i + 1) * inverseSize);
             for (int j = 0; j < intervals.length; j++) {
-                if (arrayInterval.contains(intervals[j])) {
+                if (arrayInterval.intersects(intervals[j])) {
                     array[i].add(j);
                 }
             }

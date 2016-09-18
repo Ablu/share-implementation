@@ -5,6 +5,7 @@ import de.vdua.share.impl.api.interfaces.Api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.vdua.share.impl.interfaces.IServer;
+import de.vdua.share.impl.interfaces.IServerListener;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -14,7 +15,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class WebsocketApi extends WebSocketServer implements Api {
+public class WebsocketApi extends WebSocketServer implements Api, IServerListener{
     private Collection<WebSocket> clientConnections = new ArrayList<>();
     private Gson gson = new GsonBuilder().create();
     private IServer server;
@@ -22,6 +23,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
     public WebsocketApi(InetSocketAddress bindAddress, IServer server) throws UnknownHostException {
         super(bindAddress);
         this.server = server;
+        server.addServerListener(this);
     }
 
     @Override
@@ -64,5 +66,10 @@ public class WebsocketApi extends WebSocketServer implements Api {
     @Override
     public void onError(WebSocket webSocket, Exception e) {
         System.out.println("on error");
+    }
+
+    @Override
+    public void onMappingUpdate(IServer eventServer) {
+        broadcast(eventServer.getStorageNodes());
     }
 }

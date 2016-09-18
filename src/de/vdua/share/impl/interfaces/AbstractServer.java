@@ -15,7 +15,7 @@ public abstract class AbstractServer implements IServer{
             this.listeners.add(listener);
     }
 
-    protected void fireOnMappingUpdate(){
+    protected final void fireOnMappingUpdate(){
         for(IServerListener listener : this.listeners){
             listener.onMappingUpdate(this);
         }

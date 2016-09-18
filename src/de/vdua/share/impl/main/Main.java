@@ -18,7 +18,6 @@ public class Main {
         final IServer server = new Server(2.0);
         WebsocketApi api = new WebsocketApi(address, server);
         api.initalize();
-        server.addServerListener(api);
         final StorageNode storageNode1 = server.addStorageNode();
         HashMap<StorageNode, Double> capacities = new HashMap<>();
         capacities.put(storageNode1, 1.0);
