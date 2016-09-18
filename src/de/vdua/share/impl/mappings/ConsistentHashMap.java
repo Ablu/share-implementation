@@ -1,6 +1,7 @@
 package de.vdua.share.impl.mappings;
 
 import de.vdua.share.impl.entities.Interval;
+import de.vdua.share.impl.interfaces.DoubleHashable;
 
 import java.util.LinkedList;
 
@@ -35,12 +36,12 @@ public class ConsistentHashMap<E> {
         return this.mappedElements[index];
     }
 
-    public E getElement(Object hashAble) {
+    public E getElement(DoubleHashable hashAble) {
         return getElement(getElementIndex(hashAble));
     }
 
-    public int getElementIndex(Object hashAble) {
-        return getElementIndex(hashAble.hashCode() / Integer.MAX_VALUE);
+    public int getElementIndex(DoubleHashable hashAble) {
+        return getElementIndex(hashAble.getHashAsDouble());
     }
 
     public int getElementIndex(double hash) {

@@ -18,4 +18,7 @@ public interface IServer {
     double getStretchFactor();
 
     void storeData(DataEntity entity);
+
+    void addServerListener(IServerListener listener);
+
 }

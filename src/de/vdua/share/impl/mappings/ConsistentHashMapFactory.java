@@ -46,6 +46,11 @@ public class ConsistentHashMapFactory<E> {
     }
 
     public boolean addMapping(Interval interval, E element) {
+        if (element == null) {
+            int i = 0;
+            i++;
+        }
+
         if (useVerification) {
             for (int i = 0; i < intervals.size(); i++) {
                 if (interval.intersects(intervals.get(i))) {

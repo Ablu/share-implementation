@@ -34,7 +34,9 @@ public class Interval {
     }
 
     public boolean contains(double val) {
-        return (val > start || (start == val && includeStart)) && (val < end || (end == val && includeEnd));
+        boolean result = (val > start || (start == val && includeStart)) && (val < end || (end == val && includeEnd));
+        System.out.println("Interval(" + start + "," + end + "," + includeStart + "," + includeEnd + ").contains(" + val + ") == " + result);
+        return result;
     }
 
     public boolean contains(double start, double end) {
