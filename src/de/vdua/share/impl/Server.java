@@ -28,17 +28,16 @@ public class Server extends AbstractServer implements IServer {
     //Expose manipulation methods
 
     @Override
-    public synchronized boolean changeCapacities(HashMap<StorageNode, Double> capacities) {
+    public synchronized void changeCapacities(HashMap<StorageNode, Double> capacities) {
         //Check invariant
         double totalCapacity = 0;
         for (Double d : capacities.values())
             totalCapacity += d;
         if (totalCapacity != 1.0)
-            return false;
+            throw new IllegalStateException("Expected capacity to sum up to 1!");
         //Update capacities
         capacities.forEach((storageNode, capacity) -> storageNode.setCapacity(capacity, getStretchFactor()));
         updateMapping();
-        return true;
     }
 
     @Override

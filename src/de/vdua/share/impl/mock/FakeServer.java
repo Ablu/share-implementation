@@ -18,8 +18,8 @@ public class FakeServer extends AbstractServer implements IServer {
     }
 
     @Override
-    public boolean changeCapacities(HashMap<StorageNode, Double> capacities) {
-        return false;
+    public void changeCapacities(HashMap<StorageNode, Double> capacities) {
+
     }
 
     @Override

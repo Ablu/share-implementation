@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public interface IServer {
-    boolean changeCapacities(HashMap<StorageNode, Double> capacities);
+    void changeCapacities(HashMap<StorageNode, Double> capacities);
 
     StorageNode addStorageNode();
 
