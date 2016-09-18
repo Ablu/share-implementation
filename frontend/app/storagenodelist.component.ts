@@ -36,7 +36,7 @@ export class StorageNodeListComponent {
         shareService.storageNodeDeletedSource$.subscribe(storageNode => {
             for (let i = 0; i < this.storageNodes.length; ++i) {
                 if (this.storageNodes[i].id == storageNode.id) {
-                    delete this.storageNodes[i];
+                    this.storageNodes.splice(i, 1);
                     break;
                 }
             }
