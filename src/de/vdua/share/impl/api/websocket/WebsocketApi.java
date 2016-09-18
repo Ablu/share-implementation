@@ -1,5 +1,6 @@
 package de.vdua.share.impl.api.websocket;
 
+import com.google.gson.internal.LinkedTreeMap;
 import de.vdua.share.impl.api.interfaces.Api;
 
 import com.google.gson.Gson;
@@ -65,10 +66,14 @@ public class WebsocketApi extends WebSocketServer implements Api {
     @Override
     public void onMessage(WebSocket webSocket, String s) {
         try {
-            ClientMessage message = gson.fromJson(s, ClientMessage.class);
-            if (message.command.equals("addStorageNode")) {
-                System.out.println("Adding storage node!");
-                server.addStorageNode();
+            LinkedTreeMap message = (LinkedTreeMap) gson.fromJson(s, Object.class);
+            final String command = (String) message.get("command");
+
+            switch (command) {
+                case "addStorageNode":
+                    System.out.println("Adding storage node!");
+                    server.addStorageNode();
+                    break;
             }
 
             sendUpdate();
