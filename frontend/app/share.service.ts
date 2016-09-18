@@ -34,7 +34,7 @@ export class ShareService {
         });
     }
 
-    onMessage(message: MessageEvent) {
+    private onMessage(message: MessageEvent) {
         let receivedStorageNodes = JSON.parse(message.data);
         for (let receivedNode of receivedStorageNodes) {
             let storageNode: StorageNode = receivedNode;
@@ -54,5 +54,15 @@ export class ShareService {
                 this.storageNodes.delete(id);
             }
         }
+    }
+
+    private send(obj) {
+        this.websocket.send(JSON.stringify(obj));
+    }
+
+    public addStorageNode() {
+        this.send({
+            command: 'addStorageNode',
+        });
     }
 }

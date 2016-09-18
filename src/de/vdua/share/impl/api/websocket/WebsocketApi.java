@@ -23,7 +23,11 @@ public class WebsocketApi extends WebSocketServer implements Api {
     public WebsocketApi(InetSocketAddress bindAddress, IServer server) throws UnknownHostException {
         super(bindAddress);
         this.server = server;
-        server.addServerListener(eventServer -> broadcast(eventServer.getStorageNodes()));
+        server.addServerListener(eventServer -> sendUpdate());
+    }
+
+    private void sendUpdate() {
+        broadcast(server.getStorageNodes());
     }
 
     @Override
@@ -60,7 +64,17 @@ public class WebsocketApi extends WebSocketServer implements Api {
 
     @Override
     public void onMessage(WebSocket webSocket, String s) {
-        System.out.println("on message: " + s);
+        try {
+            ClientMessage message = gson.fromJson(s, ClientMessage.class);
+            if (message.command.equals("addStorageNode")) {
+                System.out.println("Adding storage node!");
+                server.addStorageNode();
+            }
+
+            sendUpdate();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     @Override
