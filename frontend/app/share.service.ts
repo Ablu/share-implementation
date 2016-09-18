@@ -38,11 +38,11 @@ export class ShareService {
         let receivedStorageNodes = JSON.parse(message.data);
         for (let receivedNode of receivedStorageNodes) {
             let storageNode: StorageNode = receivedNode;
-            if (!this.storageNodes[storageNode.id]) {
-                this.storageNodes[storageNode.id] = storageNode;
+            if (!this.storageNodes.has(storageNode.id)) {
+                this.storageNodes.set(storageNode.id, storageNode);
                 this.storageNodeAdded.next(storageNode);
             } else {
-                this.storageNodes[storageNode.id] = storageNode;
+                this.storageNodes.set(storageNode.id, storageNode);
                 this.storageNodeUpdated.next(storageNode);
             }
         }
@@ -50,7 +50,7 @@ export class ShareService {
         for (let id of Array.from(this.storageNodes.keys())) {
             let exists = receivedStorageNodes.filter(node => node.id == id).length > 0;
             if (!exists) {
-                this.storageNodeDeleted.next(this.storageNodes[id]);
+                this.storageNodeDeleted.next(this.storageNodes.get(id));
                 this.storageNodes.delete(id);
             }
         }
