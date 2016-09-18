@@ -21,7 +21,8 @@ public class StorageNodeCHMFactory extends ConsistentHashMapFactory<LinkedList<R
     private void addStorageNodes(HashSet<StorageNode> storageNodesP) {
         HashSet<StorageNode> storageNodes = new HashSet<>(storageNodesP);
         //Determine bagIntervals
-        Interval[] bagIntervals = genBagIntervalsFromBorderSet(genStorageNodeIntervalBorderSet(storageNodes));
+        TreeSet<Double> borders = genStorageNodeIntervalBorderSet(storageNodes);
+        Interval[] bagIntervals = genBagIntervalsFromBorderSet(borders);
         LinkedList<ResponsibilityIntervalStorageMapping>[] bags = new LinkedList[bagIntervals.length];
 
         //Mapping of intervals to their represented bags

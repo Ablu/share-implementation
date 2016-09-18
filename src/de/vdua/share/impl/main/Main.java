@@ -15,7 +15,7 @@ import java.util.HashSet;
 public class Main {
     public static void main(String args[]) throws UnknownHostException {
         InetSocketAddress address = new InetSocketAddress(9456);
-        final IServer server = new Server(1.0);
+        final IServer server = new Server(2.0);
         Api api = new WebsocketApi(address, server);
         api.initalize();
         final StorageNode storageNode1 = server.addStorageNode();
@@ -31,6 +31,7 @@ public class Main {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                System.out.println("Add new node.");
                 StorageNode storageNode2 = server.addStorageNode();
                 HashMap<StorageNode, Double> capacities = new HashMap<>();
                 capacities.put(storageNode1, 0.5);

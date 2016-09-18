@@ -1,5 +1,8 @@
 package de.vdua.share.impl.entities;
 
+import de.vdua.share.impl.interfaces.DoubleHashable;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 /**
  * Created by postm on 17-Aug-16.
  */
-public class StorageNode extends AbstractEntity {
+public class StorageNode extends AbstractEntity implements DoubleHashable {
 
     private final int id;
     private double capacity;
@@ -21,12 +24,13 @@ public class StorageNode extends AbstractEntity {
 
     private static List<Interval> devideInterval(Interval initialInterval) {
         LinkedList<Interval> devide = new LinkedList<Interval>();
-        double end = initialInterval.getEnd();
-        devide.add(new Interval(initialInterval.getStart(), Math.min(1.0, end)));
-        end -= 1.0;
-        while (end > 0) {
-            devide.add(new Interval(0, Math.min(1.0, end)));
-            end -= 1.0;
+        BigDecimal end = new BigDecimal(initialInterval.getEnd());
+        devide.add(new Interval(initialInterval.getStart(), Math.min(1.0, end.doubleValue())));
+        end = end.subtract(new BigDecimal(1));
+        end = end.setScale(9, BigDecimal.ROUND_HALF_UP);
+        while (end.doubleValue() > 0) {
+            devide.add(new Interval(0, Math.min(1.0, end.doubleValue())));
+            end = end.subtract(new BigDecimal(1));
         }
         return devide;
     }
@@ -40,9 +44,10 @@ public class StorageNode extends AbstractEntity {
     }
 
     private Interval genInterval(double capacity, double stretchFactor) {
-        double hash = (double) this.hashCode() / Integer.MAX_VALUE; //TODO use other hashing mechanic
-        System.err.println("genInterval hash=" + hash);
-        return new Interval(hash, hash + (stretchFactor * capacity));
+        double hash = this.getHashAsDouble(); //TODO use other hashing mechanic
+        double extendedHash = hash + (stretchFactor * capacity);
+        System.err.println("genInterval(" + hash + ", " + extendedHash + " )");
+        return new Interval(hash, extendedHash);
     }
 
     public int getId() {

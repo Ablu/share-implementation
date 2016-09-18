@@ -2,6 +2,7 @@ package de.vdua.share.impl;
 
 import de.vdua.share.impl.entities.DataEntity;
 import de.vdua.share.impl.entities.StorageNode;
+import de.vdua.share.impl.interfaces.AbstractServer;
 import de.vdua.share.impl.interfaces.IServer;
 import de.vdua.share.impl.mappings.ConsistentHashMap;
 import de.vdua.share.impl.mappings.FinalMappingFactory;
@@ -13,7 +14,7 @@ import java.util.HashSet;
 /**
  * Created by postm on 17-Aug-16.
  */
-public class Server implements IServer {
+public class Server extends AbstractServer implements IServer {
 
     private HashSet<StorageNode> storageNodes = new HashSet<StorageNode>();
     private double stretchFactor;
@@ -63,6 +64,7 @@ public class Server implements IServer {
         boolean useVerification = false;
         FinalMappingFactory factory = new FinalMappingFactory(new StorageNodeCHMFactory(this.storageNodes, useVerification), useVerification);
         this.nodeMapping = factory.createConsistentHashMap();
+        fireOnMappingUpdate();
     }
 
     @Override

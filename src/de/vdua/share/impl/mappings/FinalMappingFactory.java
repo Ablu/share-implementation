@@ -26,31 +26,31 @@ public class FinalMappingFactory extends ConsistentHashMapFactory<ConsistentHash
             Interval interval = firstMapping.getInterval(i);
             LinkedList<ResponsibilityIntervalStorageMapping> possibleNodes = firstMapping.getElement(i);
 
+            if(possibleNodes == null){
+                int test = 0;
+                test++;
+            }
+
             //Create second level intervals
-            StorageNode[] finalMappedNodes = new StorageNode[possibleNodes.size()];
+            StorageNode[] finalMappedNodes = new StorageNode[possibleNodes.size() + 1];
             TreeSet<Double> secondLvlIntervalBorder = new TreeSet<>((d1, d2) -> d1.compareTo(d2));
             for (ResponsibilityIntervalStorageMapping possibleNodeMapping : possibleNodes) {
-                secondLvlIntervalBorder.add((double) possibleNodeMapping.hashCode() / Integer.MAX_VALUE);
+                secondLvlIntervalBorder.add(possibleNodeMapping.getHashAsDouble());
             }
             //Map intervals to nodes
             Interval[] secondLvlIntervals = genBagIntervalsFromBorderSet(secondLvlIntervalBorder);
             for (ResponsibilityIntervalStorageMapping possibleNodeMapping : possibleNodes) {
                 for (int j = 0; j < secondLvlIntervals.length; j++) {
-                    if (secondLvlIntervals[j].contains(possibleNodeMapping.hashCode() / Integer.MAX_VALUE)) {
+                    if (secondLvlIntervals[j].contains(possibleNodeMapping.getHashAsDouble())) {
                         finalMappedNodes[j] = possibleNodeMapping.getT2();
-                        break;
                     }
                 }
             }
             //First interval is not mapped
             //-> add mapping to first interval
-            finalMappedNodes[0] = finalMappedNodes[possibleNodes.size() - 1];
+            finalMappedNodes[0] = finalMappedNodes[finalMappedNodes.length - 1];
             //Construct final mapping
             ConsistentHashMapFactory<StorageNode> secondMappingFactory = new ConsistentHashMapFactory<>(useVerification);
-            if(secondLvlIntervals.length != finalMappedNodes.length){
-                int test = 0;
-                test++;
-            }
 
             for (int j = 0; j < secondLvlIntervals.length; j++) {
                 secondMappingFactory.addMapping(secondLvlIntervals[j], finalMappedNodes[j]);
