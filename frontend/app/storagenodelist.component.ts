@@ -47,12 +47,12 @@ export class StorageNodeListComponent {
 
     private updateCapacities() {
         let capacitySum = 0;
-        for (let node: StorageNode of this.storageNodes) {
+        for (let node of this.storageNodes) {
             capacitySum += +node.capacity;
         }
 
         var newCapacities = [];
-        for (let node: StorageNode of this.storageNodes) {
+        for (let node of this.storageNodes) {
             newCapacities.push({
                 id: node.id,
                 capacity: node.capacity / capacitySum,
