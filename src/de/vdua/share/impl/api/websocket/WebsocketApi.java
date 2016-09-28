@@ -120,11 +120,16 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     double stretchFactor = (double) message.get("factor");
                     server.setStretchFactor(stretchFactor);
                     break;
+                default:
+                    System.out.print("Received unknown command: ");
+                    System.out.println(message);
+                    break;
             }
-
             sendUpdate();
+
         } catch (Exception e) {
             System.err.println(e.getMessage());
+            System.err.println(Arrays.toString(e.getStackTrace()));
         }
     }
 
