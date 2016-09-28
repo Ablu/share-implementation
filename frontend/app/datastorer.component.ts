@@ -5,7 +5,7 @@ import {ShareService} from "./share.service";
     selector: 'datastorer',
     providers: [ShareService],
     template: `
-  <label for="data">Data to store:</label>
+    <label for="data">Data to store:</label>
     <input type="text" id="data"
        required
        [(ngModel)]="data" name="data">
