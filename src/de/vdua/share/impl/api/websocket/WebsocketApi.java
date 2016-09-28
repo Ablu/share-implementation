@@ -15,14 +15,26 @@ import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 public class WebsocketApi extends WebSocketServer implements Api {
     private Collection<WebSocket> clientConnections = new ArrayList<>();
     private Gson gson = new GsonBuilder().create();
     private IServer server;
+
+    private class State {
+        HashSet<StorageNode> storageNodes;
+        double stretchFactor;
+
+        State() {
+            storageNodes = server.getStorageNodes();
+            stretchFactor = server.getStretchFactor();
+        }
+    }
+
+    private State getState() {
+        return new State();
+    }
 
     public WebsocketApi(InetSocketAddress bindAddress, IServer server) throws UnknownHostException {
         super(bindAddress);
@@ -31,7 +43,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
     }
 
     private void sendUpdate() {
-        broadcast(server.getStorageNodes());
+        broadcast(getState());
     }
 
     @Override
@@ -50,7 +62,8 @@ public class WebsocketApi extends WebSocketServer implements Api {
         try {
             System.out.println("on open");
             clientConnections.add(webSocket);
-            webSocket.send(gson.toJson(server.getStorageNodes()));
+
+            broadcast(getState());
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
@@ -102,6 +115,10 @@ public class WebsocketApi extends WebSocketServer implements Api {
                         newCapacities.put(getStorageNodeById(id), newCapacity);
                     }
                     server.changeCapacities(newCapacities);
+                    break;
+                case "updateStrechFactor":
+                    double stretchFactor = (double) message.get("factor");
+                    server.setStretchFactor(stretchFactor);
                     break;
             }
 

@@ -11,6 +11,9 @@ import {StorageNodeListComponent} from './storagenodelist.component'
     <div>
         <datastorer></datastorer>
     </div>
+    <div>
+        <stretch-factor-edit></stretch-factor-edit>
+    </div>
   `
 })
 export class AppComponent {

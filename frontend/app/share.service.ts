@@ -17,6 +17,9 @@ export class ShareService {
     private storageNodeUpdated = new Subject<StorageNode>();
     storageNodeUpdatedSource$ = this.storageNodeUpdated.asObservable();
 
+    private stretchFactorUpdated = new Subject<number>();
+    strechFactorUpdatedSource$ = this.stretchFactorUpdated.asObservable();
+
     constructor() {
         this.createWebsocketConnection();
         setInterval(() => {
@@ -35,7 +38,11 @@ export class ShareService {
     }
 
     private onMessage(message: MessageEvent) {
-        let receivedStorageNodes = JSON.parse(message.data);
+        let state = JSON.parse(message.data);
+
+        this.stretchFactorUpdated.next(state.stretchFactor);
+
+        let receivedStorageNodes = state.storageNodes;
         for (let receivedNode of receivedStorageNodes) {
             let storageNode: StorageNode = receivedNode;
             if (!this.storageNodes.has(storageNode.id)) {
@@ -77,6 +84,13 @@ export class ShareService {
         this.send({
             command: 'updateCapacities',
             capacities: capacities,
+        })
+    }
+
+    public updateStretchFactor(factor: number) {
+        this.send({
+            command: 'updateStrechFactor',
+            factor: factor,
         })
     }
 }
