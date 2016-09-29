@@ -33,8 +33,8 @@ public class Server extends AbstractServer implements IServer {
         double totalCapacity = 0;
         for (Double d : capacities.values())
             totalCapacity += d;
-        if (totalCapacity != 1.0)
-            throw new IllegalStateException("Expected capacity to sum up to 1!");
+        if (Math.abs(totalCapacity - 1.0) > 0.00001)
+            throw new IllegalStateException("Expected capacity to sum up to 1! Capacity was: " + totalCapacity);
         //Update capacities
         capacities.forEach((storageNode, capacity) -> storageNode.setCapacity(capacity, getStretchFactor()));
         updateMapping();
