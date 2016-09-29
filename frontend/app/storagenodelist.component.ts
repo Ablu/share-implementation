@@ -10,11 +10,40 @@ import {StorageNode} from "./entities/storagenode";
     interval {
         width: 100%;
     }
+    
+    .intervals {
+        float: left;
+    }
+    .metadata {
+        float: right;
+    }
+    .floatStop {
+        clear: both;
+    }
 `],
     template: `
-    <div *ngFor="let storageNode of storageNodes">
-        <storage-node [storageNode]="storageNode"></storage-node>
-    </div>
+    <md-card *ngFor="let storageNode of storageNodes">
+       <md-card-title>Node {{storageNode.id}}:</md-card-title>   
+       <md-card-content>
+            <div class="intervals">
+                <div *ngFor="let interval of storageNode.intervals">
+                    <interval [interval]="interval">
+                    </interval>
+                </div>
+            </div>
+            <div class="metadata">
+                <input #slider type="range" max="1" step="0.0001"
+                    [(ngModel)]="storageNode.capacity" name="storageNode.capacity"
+                    />
+                <!--<md-slider min="0" max="1" step="0.0001" [(ngModel)]="storageNode.capacity"></md-slider>-->
+            </div>
+            
+            <div class="floatStop"></div>
+       </md-card-content>
+       <md-card-actions>
+            <button md-button><md-icon class="md-24">delete</md-icon></button>
+       </md-card-actions>
+    </md-card>
     
     <button md-mini-fab (click)="updateCapacities()" color="primary">
         <md-icon class="md-24">refresh</md-icon>
