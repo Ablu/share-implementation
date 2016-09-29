@@ -19,9 +19,6 @@ import {StorageNode} from "./entities/storagenode";
     <button md-mini-fab (click)="updateCapacities()" color="primary">
         <md-icon class="md-24">refresh</md-icon>
     </button>
-    <button md-fab (click)="createStorageNode()" color="accent">
-        <md-icon class="md-24">add</md-icon>
-    </button>
 `,
 })
 export class StorageNodeListComponent {
@@ -63,9 +60,5 @@ export class StorageNodeListComponent {
             });
         }
         this.shareService.updateCapacities(newCapacities);
-    }
-
-    private createStorageNode() {
-        this.shareService.addStorageNode();
     }
 }

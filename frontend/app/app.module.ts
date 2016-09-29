@@ -9,6 +9,7 @@ import {StorageNodeComponent} from "./storagenode.component";
 import {DataStorerComponent} from "./datastorer.component";
 import {StretchFactorEdit} from "./stretchfactoredit.component";
 import {FormsModule} from "@angular/forms";
+import {AddStorageNodeComponent} from "./addstoragenode.component";
 
 @NgModule({
     imports:      [
@@ -23,6 +24,7 @@ import {FormsModule} from "@angular/forms";
         StorageNodeComponent,
         StorageNodeListComponent,
         StretchFactorEdit,
+        AddStorageNodeComponent,
     ],
     bootstrap:    [ AppComponent ]
 })

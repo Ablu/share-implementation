@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import {MdIconRegistry} from '@angular/material';
-import {StorageNodeListComponent} from './storagenodelist.component'
-
 
 @Component({
     selector: 'my-app',
@@ -16,11 +14,11 @@ import {StorageNodeListComponent} from './storagenodelist.component'
     <div>
     <storage-node-list></storage-node-list>
     </div>
+    <add-storagenode></add-storagenode>
   `
 })
 export class AppComponent {
     constructor(){
-
     }
 }
 
