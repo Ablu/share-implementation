@@ -116,7 +116,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     }
                     server.changeCapacities(newCapacities);
                     break;
-                case "updateStrechFactor":
+                case "updateStretchFactor":
                     double stretchFactor = (double) message.get("factor");
                     server.setStretchFactor(stretchFactor);
                     break;

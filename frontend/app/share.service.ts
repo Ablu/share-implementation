@@ -89,7 +89,7 @@ export class ShareService {
 
     public updateStretchFactor(factor: number) {
         this.send({
-            command: 'updateStrechFactor',
+            command: 'updateStretchFactor',
             factor: factor,
         })
     }
