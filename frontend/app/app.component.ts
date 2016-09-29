@@ -5,6 +5,11 @@ import {MdIconRegistry} from '@angular/material';
     selector: 'my-app',
     providers: [MdIconRegistry],
     template: `
+    <md-toolbar color="primary">
+        <md-icon class="md-24" style="padding: 0 14px;">menu</md-icon>
+        <span>A SHARE implementation</span>
+    </md-toolbar>
+    <div>
     <div>
         <datastorer></datastorer>
     </div>
@@ -13,6 +18,7 @@ import {MdIconRegistry} from '@angular/material';
     </div>
     <div>
     <storage-node-list></storage-node-list>
+    </div>
     </div>
     <add-storagenode></add-storagenode>
   `
