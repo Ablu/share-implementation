@@ -16,8 +16,12 @@ import {StorageNode} from "./entities/storagenode";
         <storage-node [storageNode]="storageNode"></storage-node>
     </div>
     
-    <input type="submit" value="Update capacities" (click)="updateCapacities()"/>
-    <input type="submit" value="Add Storage Node" (click)="createStorageNode()"/>
+    <button md-mini-fab (click)="updateCapacities()" color="primary">
+        <md-icon class="md-24">refresh</md-icon>
+    </button>
+    <button md-fab (click)="createStorageNode()" color="accent">
+        <md-icon class="md-24">add</md-icon>
+    </button>
 `,
 })
 export class StorageNodeListComponent {

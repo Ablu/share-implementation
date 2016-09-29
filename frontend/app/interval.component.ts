@@ -3,7 +3,9 @@ import {Interval} from "./entities/interval";
 
 @Component({
     selector: 'interval',
-    template: `<canvas #canvas width="200" height="30"></canvas>`
+    template: `
+    <canvas #canvas width="200" height="30"></canvas>
+`
 })
 export class IntervalComponent {
     @ViewChild("canvas") canvas: ElementRef;

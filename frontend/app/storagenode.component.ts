@@ -28,6 +28,7 @@ import {StorageNode} from "./entities/storagenode";
             <input #slider type="range" max="1" step="0.0001"
                 [(ngModel)]="storageNode.capacity" name="storageNode.capacity"
                 />
+            <!--<md-slider min="0" max="1" step="0.0001" [(ngModel)]="storageNode.capacity"></md-slider>-->
         </div>
         <div class="floatStop"></div>
 `})

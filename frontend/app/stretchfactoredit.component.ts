@@ -6,11 +6,10 @@ import setInterval = core.setInterval;
     selector: 'stretch-factor-edit',
     providers: [ShareService],
     template: `
-    <label for="factor">Stretchfactor:</label>
-    <input type="number" id="factor"
-       required
-       [(ngModel)]="factor" name="factor">
-    <input type="submit" value="Update Strech Factor" (click)="updateStretchFactor()"/>
+    <md-input placeholder="Stretchfactor" [(ngModel)]="factor"></md-input>
+    <button md-mini-fab type="submit" (click)="updateStretchFactor()" color="primary">
+        <md-icon class="md-24">done</md-icon>
+    </button>
 `,
 })
 export class StretchFactorEdit {
@@ -23,6 +22,6 @@ export class StretchFactorEdit {
     }
 
     updateStretchFactor() {
-        this.shareService.updateStretchFactor(this.factor);
+        this.shareService.updateStretchFactor(+this.factor);
     }
 }

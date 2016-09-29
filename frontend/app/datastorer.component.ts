@@ -5,11 +5,10 @@ import {ShareService} from "./share.service";
     selector: 'datastorer',
     providers: [ShareService],
     template: `
-    <label for="data">Data to store:</label>
-    <input type="text" id="data"
-       required
-       [(ngModel)]="data" name="data">
-    <input type="submit" value="Store" (click)="store()"/>
+    <md-input placeholder="Data to store" [(ngModel)]="data"></md-input>
+    <button md-mini-fab type="submit" (click)="store()" color="primary">
+        <md-icon class="md-24">add</md-icon>
+    </button>
 `,
 })
 export class DataStorerComponent {

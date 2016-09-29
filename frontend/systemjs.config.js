@@ -18,6 +18,10 @@
         'rxjs':                       { defaultExtension: 'js' },
         'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
         'ng2-charts':                 { main: 'ng2-charts.js', defaultExtension: 'js' },
+        '@angular/material': {
+            format: 'cjs',
+            main: 'material.umd.js'
+        }
     };
     var ngPackageNames = [
         'common',
