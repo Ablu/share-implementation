@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import {MdIconRegistry} from '@angular/material';
+import {ShareService} from "./share.service";
+import {StorageNode} from "./entities/storagenode";
 
 @Component({
     selector: 'my-app',
-    providers: [MdIconRegistry],
+    providers: [MdIconRegistry, ShareService],
     styles: [`
     #content {
         padding: 20px;
@@ -28,14 +30,36 @@ import {MdIconRegistry} from '@angular/material';
             <stretch-factor-edit></stretch-factor-edit>
         </div>
         <div>
-            <storage-node-list></storage-node-list>
+            <storage-node-list [storageNodes]="storageNodes"></storage-node-list>
         </div>
     </div>
     <add-storagenode></add-storagenode>
   `
 })
 export class AppComponent {
-    constructor(){
+    storageNodes: StorageNode[] = [];
+
+    constructor(private shareService: ShareService) {
+        shareService.storageNodeAddedSource$.subscribe(storageNode => {
+            this.storageNodes.push(storageNode);
+        });
+        shareService.storageNodeUpdatedSource$.subscribe(storageNode => {
+            for (let i = 0; i < this.storageNodes.length; ++i) {
+                if (this.storageNodes[i].id == storageNode.id) {
+                    this.storageNodes[i] = storageNode;
+                    break;
+                }
+            }
+        });
+        shareService.storageNodeDeletedSource$.subscribe(storageNode => {
+            for (let i = 0; i < this.storageNodes.length; ++i) {
+                if (this.storageNodes[i].id == storageNode.id) {
+                    this.storageNodes.splice(i, 1);
+                    break;
+                }
+            }
+        });
     }
+
 }
 

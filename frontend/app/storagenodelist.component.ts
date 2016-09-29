@@ -1,4 +1,4 @@
-import {Component, ViewChild, ElementRef} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ShareService} from "./share.service";
 import setInterval = core.setInterval;
 import {StorageNode} from "./entities/storagenode";
@@ -51,28 +51,10 @@ import {StorageNode} from "./entities/storagenode";
 `,
 })
 export class StorageNodeListComponent {
-    private storageNodes: StorageNode[] = [];
+    @Input()
+    storageNodes: StorageNode[] = [];
 
     constructor(private shareService: ShareService) {
-        shareService.storageNodeAddedSource$.subscribe(storageNode => {
-            this.storageNodes.push(storageNode);
-        });
-        shareService.storageNodeUpdatedSource$.subscribe(storageNode => {
-            for (let i = 0; i < this.storageNodes.length; ++i) {
-                if (this.storageNodes[i].id == storageNode.id) {
-                    this.storageNodes[i] = storageNode;
-                    break;
-                }
-            }
-        });
-        shareService.storageNodeDeletedSource$.subscribe(storageNode => {
-            for (let i = 0; i < this.storageNodes.length; ++i) {
-                if (this.storageNodes[i].id == storageNode.id) {
-                    this.storageNodes.splice(i, 1);
-                    break;
-                }
-            }
-        });
     }
 
     private updateCapacities() {
