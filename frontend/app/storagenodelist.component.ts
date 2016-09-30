@@ -11,34 +11,61 @@ import {StorageNode} from "./entities/storagenode";
         width: 100%;
     }
     
-    .intervals {
-        float: left;
+    .row {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 25px;
     }
-    .metadata {
-        float: right;
+    
+    .row > div {
+        display: table-cell;
     }
-    .floatStop {
-        clear: both;
+    
+    .data {
+        display: flex;
+    }
+    
+    .data > md-card {
+        display: inline-block;
+        margin: 5px;
     }
 `],
     template: `
     <md-card *ngFor="let storageNode of storageNodes">
        <md-card-title>Node {{storageNode.id}}:</md-card-title>   
-       <md-card-content>
+       <md-card-content class="row">
             <div class="intervals">
                 <div *ngFor="let interval of storageNode.intervals">
                     <interval [interval]="interval">
                     </interval>
                 </div>
             </div>
+            <div class="data">
+                <h2>Stored data:</h2>
+                <md-card *ngFor="let data of storageNode.storedData">
+                    <md-card-subtitle>{{data.id}}:</md-card-subtitle>
+                    <md-card-content>
+                        <p>{{data.data}}</p>
+                    </md-card-content>
+                    <md-card-actions>
+                       <button md-button>DELETE</button>
+                    </md-card-actions>
+                </md-card>
+                <!--<md-list>
+                    <md-list-item *ngFor="let data of storageNode.storedData">
+                        <h3 md-line>{{data.id}}:</h3>
+                        <p md-line>{{data.data}}</p>
+                    </md-list-item>
+                </md-list>-->
+            </div>
             <div class="metadata">
                 <input #slider type="range" max="1" step="0.0001"
                     [(ngModel)]="storageNode.capacity" name="storageNode.capacity"
                     />
+                    
                 <!--<md-slider min="0" max="1" step="0.0001" [(ngModel)]="storageNode.capacity"></md-slider>-->
             </div>
-            
-            <div class="floatStop"></div>
        </md-card-content>
        <md-card-actions>
             <button md-button (click)="deleteNode(storageNode.id)">
