@@ -22,4 +22,9 @@ public class DataEntity extends AbstractEntity implements DoubleHashable{
     public Object getData() {
         return data;
     }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }
