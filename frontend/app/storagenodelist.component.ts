@@ -24,6 +24,7 @@ import {StorageNode} from "./entities/storagenode";
     
     .data {
         display: flex;
+        width: 100%;
     }
     
     .data > md-card {
