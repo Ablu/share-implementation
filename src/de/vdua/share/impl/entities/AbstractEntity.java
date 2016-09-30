@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class AbstractEntity {
 
-    public static final int STARTING_ID = 0;
+    public static final int STARTING_ID = (int)(Math.random()* Integer.MAX_VALUE);
 
     private static HashMap<Class<?>, Integer> NEXT_IDS = new HashMap<Class<?>, Integer>();
 

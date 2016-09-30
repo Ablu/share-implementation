@@ -4,6 +4,7 @@ import de.vdua.share.impl.interfaces.DoubleHashable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     private final int id;
     private double capacity;
     private List<Interval> intervals = new ArrayList<>();
+
+    private HashMap<Integer, DataEntity> storedData = new HashMap<>();
 
     public StorageNode(double capacity, double stretchFactor) {
         this.id = getNextId(StorageNode.class);
@@ -36,7 +39,23 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     }
 
     public void storeData(DataEntity data) {
-        System.out.println("StorageNode.storeData: id=" + id + " data={id=" + data.getId() + ", object=" + data.getData() + "}");
+        System.out.print("StorageNode.storeData: id=" + id + " data={id=" + data.getId() + ", object=" + data.getData() + "}");
+        if (!this.storedData.containsKey(data.getId())) {
+            this.storedData.put(data.getId(),data);
+            System.out.println(" finished");
+        }else{
+            System.out.println(" failed");
+        }
+    }
+
+    public void deleteData(DataEntity data) {
+        System.out.println("StorageNode.deleteData: id=" + id + " data={id=" + data.getId() + ", object=" + data.getData() + "}");
+        if (this.storedData.containsKey(data.getId())) {
+            this.storedData.remove(data.getId());
+            System.out.println(" finished");
+        }else{
+            System.out.println(" failed");
+        }
     }
 
     public void updateInterval(double stretchFactor) {

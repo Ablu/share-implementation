@@ -77,4 +77,10 @@ public class Server extends AbstractServer implements IServer {
         responsibleNode.storeData(entity);
     }
 
+    public void deleteData(DataEntity entity){
+        StorageNode responsibleNode = this.nodeMapping.getElement(entity).getElement(entity);
+        responsibleNode.deleteData(entity);
+    }
+
+
 }
