@@ -1,6 +1,7 @@
 package de.vdua.share.impl.entities;
 
 import de.vdua.share.impl.interfaces.DoubleHashable;
+import de.vdua.share.impl.subjects.StorageNodesSubject;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -14,12 +15,17 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     private double capacity;
     private List<Interval> intervals = new ArrayList<>();
 
-    private HashMap<Integer, DataEntity> storedData = new HashMap<>();
+    private StorageNodesSubject subject;
 
     public StorageNode(double capacity, double stretchFactor) {
+        this(capacity, stretchFactor, new StorageNodesSubject());
+    }
+
+    public StorageNode(double capacity, double stretchFactor, StorageNodesSubject subject) {
         this.id = getNextId(StorageNode.class);
         this.capacity = capacity;
         this.updateInterval(stretchFactor);
+        this.subject = subject;
     }
 
     private static List<Interval> devideInterval(Interval initialInterval) {
@@ -33,26 +39,6 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
             end = end.subtract(new BigDecimal(1));
         }
         return devide;
-    }
-
-    public void storeData(DataEntity data) {
-        System.out.print("StorageNode.storeData: id=" + id + " data={id=" + data.getId() + ", object=" + data.getData() + "}");
-        if (!this.storedData.containsKey(data.getId())) {
-            this.storedData.put(data.getId(), data);
-            System.out.println(" finished");
-        } else {
-            System.out.println(" failed");
-        }
-    }
-
-    public void deleteData(DataEntity data) {
-        System.out.println("StorageNode.deleteData: id=" + id + " data={id=" + data.getId() + ", object=" + data.getData() + "}");
-        if (this.storedData.containsKey(data.getId())) {
-            this.storedData.remove(data.getId());
-            System.out.println(" finished");
-        } else {
-            System.out.println(" failed");
-        }
     }
 
     public void updateInterval(double stretchFactor) {
@@ -88,11 +74,15 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     }
 
     public Map<Integer, DataEntity> getStoredData() {
-        return Collections.unmodifiableMap(this.storedData);
+        return this.subject.getStoredData();
     }
 
     public Collection<DataEntity> getStoredDataEntities() {
-        return this.storedData.values();
+        return this.subject.getStoredData().values();
+    }
+
+    public StorageNodesSubject getSubject(){
+        return subject;
     }
 
     @Override

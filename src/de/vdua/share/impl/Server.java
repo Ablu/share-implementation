@@ -63,6 +63,9 @@ public class Server extends AbstractServer implements IServer {
         boolean useVerification = false;
         FinalMappingFactory factory = new FinalMappingFactory(new StorageNodeCHMFactory(this.storageNodes, useVerification), useVerification);
         this.nodeMapping = factory.createConsistentHashMap();
+
+
+
         fireOnMappingUpdate();
     }
 
@@ -74,12 +77,12 @@ public class Server extends AbstractServer implements IServer {
     @Override
     public void storeData(DataEntity entity) {
         StorageNode responsibleNode = this.nodeMapping.getElement(entity).getElement(entity);
-        responsibleNode.storeData(entity);
+        responsibleNode.getSubject().storeData(entity);
     }
 
     public void deleteData(DataEntity entity){
         StorageNode responsibleNode = this.nodeMapping.getElement(entity).getElement(entity);
-        responsibleNode.deleteData(entity);
+        responsibleNode.getSubject().deleteData(entity);
     }
 
 
