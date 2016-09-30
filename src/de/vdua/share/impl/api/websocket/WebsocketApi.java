@@ -52,8 +52,10 @@ public class WebsocketApi extends WebSocketServer implements Api {
     }
 
     private void broadcast(Object message) {
-        for (WebSocket socket : clientConnections) {
-            socket.send(gson.toJson(message));
+        synchronized (clientConnections) {
+            for (WebSocket socket : clientConnections) {
+                socket.send(gson.toJson(message));
+            }
         }
     }
 
@@ -61,8 +63,9 @@ public class WebsocketApi extends WebSocketServer implements Api {
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
         try {
             System.out.println("on open");
-            clientConnections.add(webSocket);
-
+            synchronized (clientConnections) {
+                clientConnections.add(webSocket);
+            }
             broadcast(getState());
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -73,7 +76,9 @@ public class WebsocketApi extends WebSocketServer implements Api {
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         try {
             System.out.println("on close");
-            clientConnections.remove(webSocket);
+            synchronized (clientConnections) {
+                clientConnections.remove(webSocket);
+            }
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }

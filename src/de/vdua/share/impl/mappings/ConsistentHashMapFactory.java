@@ -24,7 +24,7 @@ public class ConsistentHashMapFactory<E> {
 
     public ConsistentHashMap<E> createConsistentHashMap() {
         Interval[] intervals = this.intervals.toArray(new Interval[]{});
-        E[] elements = (E[]) this.mappedElements.toArray(); //TODO check cast
+        E[] elements = (E[]) this.mappedElements.toArray();
         LinkedList<Integer>[] array = createArray(intervals);
         return new ConsistentHashMap<E>(intervals, elements, array);
     }
