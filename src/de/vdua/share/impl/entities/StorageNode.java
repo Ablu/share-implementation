@@ -91,8 +91,12 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
         return Collections.unmodifiableMap(this.storedData);
     }
 
+    public Collection<DataEntity> getStoredDataEntities() {
+        return this.storedData.values();
+    }
+
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return this.id;
     }
 }
