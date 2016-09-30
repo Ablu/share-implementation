@@ -93,4 +93,11 @@ export class ShareService {
             factor: factor,
         })
     }
+
+    public deleteStorageNode(id: number) {
+        this.send({
+            command: 'deleteStorageNode',
+            id: id,
+        })
+    }
 }
