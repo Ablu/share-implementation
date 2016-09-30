@@ -1,24 +1,30 @@
 package de.vdua.share.impl.entities;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by postm on 17-Aug-16.
  */
 public class AbstractEntity {
 
-    public static final int STARTING_ID = (int)(Math.random()* Integer.MAX_VALUE);
-
-    private static HashMap<Class<?>, Integer> NEXT_IDS = new HashMap<Class<?>, Integer>();
+    private static HashMap<Class<?>, List<Integer>> USED_IDS = new HashMap<>();
 
     protected static int getNextId(Class<?> subClass) {
-        synchronized (NEXT_IDS) {
-            if(!NEXT_IDS.containsKey(subClass)){
-                NEXT_IDS.put(subClass, STARTING_ID);
+        synchronized (USED_IDS) {
+            if (!USED_IDS.containsKey(subClass)) {
+                USED_IDS.put(subClass, new LinkedList<>());
             }
-            Integer returnVal = NEXT_IDS.get(subClass);
-            NEXT_IDS.put(subClass ,NEXT_IDS.get(subClass) + 1);
-            return returnVal;
+            Integer generatedId;
+            synchronized (USED_IDS.get(subClass)) {
+                List<Integer> usedIds = USED_IDS.get(subClass);
+                do {
+                    generatedId = (int) (Math.random() * Integer.MAX_VALUE);
+                } while (usedIds.contains(generatedId));
+                usedIds.add(generatedId);
+            }
+            return generatedId;
         }
     }
 }

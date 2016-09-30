@@ -19,6 +19,8 @@ public interface IServer {
 
     void storeData(DataEntity entity);
 
+    void deleteData(DataEntity entity);
+
     void addServerListener(IServerListener listener);
 
 }
