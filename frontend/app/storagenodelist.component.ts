@@ -41,7 +41,9 @@ import {StorageNode} from "./entities/storagenode";
             <div class="floatStop"></div>
        </md-card-content>
        <md-card-actions>
-            <button md-button><md-icon class="md-24">delete</md-icon></button>
+            <button md-button (click)="deleteNode(storageNode.id)">
+                <md-icon class="md-24">delete</md-icon>
+            </button>
        </md-card-actions>
     </md-card>
 `,
@@ -51,5 +53,9 @@ export class StorageNodeListComponent {
     storageNodes: StorageNode[] = [];
 
     constructor(private shareService: ShareService) {
+    }
+
+    deleteNode(id: number) {
+        this.shareService.deleteStorageNode(id);
     }
 }

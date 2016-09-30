@@ -125,6 +125,10 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     double stretchFactor = (double) message.get("factor");
                     server.setStretchFactor(stretchFactor);
                     break;
+                case "deleteStorageNode":
+                    int idToDelete = ((Double) message.get("id")).intValue();
+                    System.out.println(idToDelete);
+                    // TODO: leave
                 default:
                     System.out.print("Received unknown command: ");
                     System.out.println(message);
