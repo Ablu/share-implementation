@@ -40,6 +40,10 @@ public class ConsistentHashMap<E> {
         return getElement(getElementIndex(hashAble));
     }
 
+    public E getElement(double hash) {
+        return getElement(getElementIndex(hash));
+    }
+
     public int getElementIndex(DoubleHashable hashAble) {
         return getElementIndex(hashAble.getHashAsDouble());
     }
