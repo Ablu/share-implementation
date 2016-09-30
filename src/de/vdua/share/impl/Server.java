@@ -9,8 +9,10 @@ import de.vdua.share.impl.interfaces.IServerListener;
 import de.vdua.share.impl.mappings.ConsistentHashMap;
 import de.vdua.share.impl.mappings.FinalMappingFactory;
 import de.vdua.share.impl.mappings.StorageNodeCHMFactory;
+import de.vdua.share.impl.subjects.Subject;
 
 import java.util.*;
+import java.util.Map;
 
 /**
  * Created by postm on 17-Aug-16.
@@ -18,6 +20,7 @@ import java.util.*;
 public class Server extends AbstractServer implements IServer {
 
     private HashSet<StorageNode> storageNodes = new HashSet<StorageNode>();
+    private Map<Integer, Subject> storageNodeSubjects = new HashMap<>();
     private double stretchFactor;
 
     private ConsistentHashMap<ConsistentHashMap<StorageNode>> nodeMapping;
@@ -66,6 +69,9 @@ public class Server extends AbstractServer implements IServer {
         boolean useVerification = false;
         FinalMappingFactory factory = new FinalMappingFactory(new StorageNodeCHMFactory(this.storageNodes, useVerification), useVerification);
         this.nodeMapping = factory.createConsistentHashMap();
+
+
+
         fireOnMappingUpdate();
     }
 

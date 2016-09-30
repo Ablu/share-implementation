@@ -12,10 +12,8 @@ import java.util.Map;
  */
 public class StorageNodesSubject extends Subject {
 
-    public static final String STORE_DATA = "storeData";
+    public static final String STORE_DATA = "getStorageNodeIdResponsibleForStoring";
     public static final String DELETE_DATA = "deleteData";
-
-    private HashMap<Integer, DataEntity> storedData = null;
 
     @Override
     protected void init() {
@@ -49,7 +47,7 @@ public class StorageNodesSubject extends Subject {
     }
 
     public void storeData(DataEntity data) {
-        System.out.print("StorageNode.storeData: data={id=" + data.getId() + ", object=" + data.getData() + "}");
+        System.out.print("StorageNode.getStorageNodeIdResponsibleForStoring: data={id=" + data.getId() + ", object=" + data.getData() + "}");
         if (!this.storedData.containsKey(data.getId())) {
             this.storedData.put(data.getId(), data);
             System.out.println(" finished");

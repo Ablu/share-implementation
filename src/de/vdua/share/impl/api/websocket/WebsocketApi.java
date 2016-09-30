@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder;
 import de.vdua.share.impl.entities.DataEntity;
 import de.vdua.share.impl.entities.StorageNode;
 import de.vdua.share.impl.interfaces.IServer;
-import de.vdua.share.impl.interfaces.IServerListener;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -104,10 +103,10 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     System.out.println("Adding storage node!");
                     server.addStorageNode();
                     break;
-                case "storeData":
+                case "getStorageNodeIdResponsibleForStoring":
                     String data = (String) message.get("data");
                     System.out.println("Storing data '" + data + "'!");
-                    server.storeData(new DataEntity(data));
+                    server.getStorageNodeIdResponsibleForStoring(new DataEntity(data));
                     break;
                 case "updateCapacities":
                     ArrayList<LinkedTreeMap> capacities = (ArrayList<LinkedTreeMap>) message.get("capacities");

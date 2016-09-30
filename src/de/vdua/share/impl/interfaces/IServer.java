@@ -17,9 +17,7 @@ public interface IServer {
 
     double getStretchFactor();
 
-    void storeData(DataEntity entity);
-
-    void deleteData(DataEntity entity);
+    int getStorageNodeIdResponsibleForStoring(DataEntity entity);
 
     void addServerListener(IServerListener listener);
 

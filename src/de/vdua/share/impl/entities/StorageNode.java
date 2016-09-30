@@ -15,17 +15,10 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     private double capacity;
     private List<Interval> intervals = new ArrayList<>();
 
-    private StorageNodesSubject subject;
-
     public StorageNode(double capacity, double stretchFactor) {
-        this(capacity, stretchFactor, new StorageNodesSubject());
-    }
-
-    public StorageNode(double capacity, double stretchFactor, StorageNodesSubject subject) {
         this.id = getNextId(StorageNode.class);
         this.capacity = capacity;
         this.updateInterval(stretchFactor);
-        this.subject = subject;
     }
 
     private static List<Interval> devideInterval(Interval initialInterval) {
@@ -71,18 +64,6 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
 
     public void setIntervals(Interval initialInterval) {
         this.intervals = devideInterval(initialInterval);
-    }
-
-    public Map<Integer, DataEntity> getStoredData() {
-        return this.subject.getStoredData();
-    }
-
-    public Collection<DataEntity> getStoredDataEntities() {
-        return this.subject.getStoredData().values();
-    }
-
-    public StorageNodesSubject getSubject(){
-        return subject;
     }
 
     @Override

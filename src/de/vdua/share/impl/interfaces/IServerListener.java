@@ -4,10 +4,10 @@ public interface IServerListener {
 
     void onMappingUpdate();
 
-    void onIssueStore(int storageNodeId, int dataId, Object storedObject);
+    void onIssueStore(int storageNodeId, int dataId, Object data);
 
     void onIssueDelete(int storageNodeId, int dataId);
 
-    void onIssueMove(int sourceStorageNode, int targetStorageNode, int dataId);
+    void onIssueMove(int sourceStorageNodeId, int targetStorageNodeId, int dataId);
 
 }
