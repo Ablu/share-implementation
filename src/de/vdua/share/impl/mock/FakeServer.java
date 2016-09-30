@@ -46,4 +46,9 @@ public class FakeServer extends AbstractServer implements IServer {
     public void storeData(DataEntity entity) {
 
     }
+
+    @Override
+    public void deleteData(DataEntity entity) {
+        
+    }
 }
