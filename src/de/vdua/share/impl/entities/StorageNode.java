@@ -14,7 +14,7 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     private double capacity;
     private List<Interval> intervals = new ArrayList<>();
 
-    private HashMap<Integer, DataEntity> storedData = new HashMap<>();
+    private List<DataEntity> storedData = new ArrayList<>();
 
     public StorageNode(double capacity, double stretchFactor) {
         this.id = getNextId(StorageNode.class);
@@ -37,8 +37,8 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
 
     public void storeData(DataEntity data) {
         System.out.print("StorageNode.storeData: id=" + id + " data={id=" + data.getId() + ", object=" + data.getData() + "}");
-        if (!this.storedData.containsKey(data.getId())) {
-            this.storedData.put(data.getId(), data);
+        if (!this.storedData.contains(data)) {
+            this.storedData.add(data);
             System.out.println(" finished");
         } else {
             System.out.println(" failed");
@@ -47,8 +47,8 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
 
     public void deleteData(DataEntity data) {
         System.out.println("StorageNode.deleteData: id=" + id + " data={id=" + data.getId() + ", object=" + data.getData() + "}");
-        if (this.storedData.containsKey(data.getId())) {
-            this.storedData.remove(data.getId());
+        if (this.storedData.contains(data)) {
+            this.storedData.remove(data);
             System.out.println(" finished");
         } else {
             System.out.println(" failed");
@@ -87,14 +87,9 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
         this.intervals = devideInterval(initialInterval);
     }
 
-    public Map<Integer, DataEntity> getStoredData() {
-        return Collections.unmodifiableMap(this.storedData);
+    public List<DataEntity> getStoredData() {
+        return Collections.unmodifiableList(this.storedData);
     }
-
-    public Collection<DataEntity> getStoredDataEntities() {
-        return this.storedData.values();
-    }
-
     @Override
     public int hashCode() {
         return this.id;
