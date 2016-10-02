@@ -5,7 +5,7 @@ import {ShareService} from "./share.service";
     selector: 'datastorer',
     providers: [ShareService],
     template: `
-    <md-input placeholder="Data to store" [(ngModel)]="data"></md-input>
+    <md-input placeholder="Data to store" [(ngModel)]="data" (keyup.enter)="store()"></md-input>
     <button md-mini-fab type="submit" (click)="store()" color="primary">
         <md-icon class="md-24">add</md-icon>
     </button>

@@ -6,7 +6,7 @@ import setInterval = core.setInterval;
     selector: 'stretch-factor-edit',
     providers: [ShareService],
     template: `
-    <md-input placeholder="Stretchfactor" [(ngModel)]="factor"></md-input>
+    <md-input placeholder="Stretchfactor" [(ngModel)]="factor" (keyup.enter)="updateStretchFactor()"></md-input>
     <button md-mini-fab type="submit" (click)="updateStretchFactor()" color="primary">
         <md-icon class="md-24">done</md-icon>
     </button>
