@@ -92,7 +92,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
     public synchronized void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
         try {
             clientConnections.add(webSocket);
-            broadcast(getState());
+            sendUpdate();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
