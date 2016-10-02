@@ -50,7 +50,7 @@ import {StorageNode} from "./entities/storagenode";
                         <p>{{data.data}}</p>
                     </md-card-content>
                     <md-card-actions>
-                       <button md-button>DELETE</button>
+                       <button md-button (click)="deleteData(data.id)">DELETE</button>
                     </md-card-actions>
                 </md-card>
                 <!--<md-list>
@@ -85,5 +85,9 @@ export class StorageNodeListComponent {
 
     deleteNode(id: number) {
         this.shareService.deleteStorageNode(id);
+    }
+
+    deleteData(id: number) {
+        this.shareService.deleteData(id);
     }
 }

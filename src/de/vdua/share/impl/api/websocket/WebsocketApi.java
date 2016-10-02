@@ -166,6 +166,12 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     storageNodeLeaveMessage.nodeId = idToDelete;
                     serverSubject.send(storageNodeLeaveMessage);
                     break;
+                case "deleteData":
+                    int dataIdToDelete = ((Double) message.get("id")).intValue();
+                    DeleteMessage deleteMessage = new DeleteMessage();
+                    deleteMessage.dataId = dataIdToDelete;
+                    serverSubject.send(deleteMessage);
+                    break;
                 default:
                     System.err.print("Received unknown command: ");
                     System.err.println(message);

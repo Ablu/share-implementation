@@ -16,6 +16,7 @@ public interface IServer {
     void unregisterStorageNode(StorageNode storageNode);
     HashSet<StorageNode> getStorageNodes();
     StorageNode getStorageNodeResponsibleForStoring(DataEntity entity);
+    StorageNode getStorageNodeResponsibleForStoring(int dataId);
 
     void registerStorageLocation(DataEntity entity, StorageNode responsibleNode);
     void unregisterStorageLocation(DataEntity entity);

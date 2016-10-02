@@ -84,11 +84,6 @@ public class Server extends AbstractServer implements IServer {
         return stretchFactor;
     }
 
-    @Override
-    public StorageNode getStorageNodeResponsibleForStoring(DataEntity entity) {
-        return this.nodeMapping.getElement(entity).getElement(entity);
-    }
-
     public synchronized void storeData(DataEntity entity) {
         StorageNode responsibleNode = this.nodeMapping.getElement(entity).getElement(entity);
         registerStorageLocation(entity, responsibleNode);
@@ -102,15 +97,15 @@ public class Server extends AbstractServer implements IServer {
         this.allStoredDataMappings.remove(entity.getId());
     }
 
-    private StorageNode getResponsibleNode(DataEntity entity) {
+    public StorageNode getStorageNodeResponsibleForStoring(DataEntity entity) {
         return this.nodeMapping.getElement(entity).getElement(entity);
     }
 
-    private StorageNode getResponsibleNode(Integer hashValue) {
+    public StorageNode getStorageNodeResponsibleForStoring(int dataId) {
         DoubleHashable fakeDataEntity = new DoubleHashable() {
             @Override
             public int hashCode() {
-                return hashValue;
+                return dataId;
             }
         };
         return this.nodeMapping.getElement(fakeDataEntity).getElement(fakeDataEntity);
@@ -122,7 +117,7 @@ public class Server extends AbstractServer implements IServer {
         synchronized (this.allStoredDataMappings) {
             for (Integer dataEntityId : this.allStoredDataMappings.keySet()) {
                 StorageNode oldResponsibleNode = this.allStoredDataMappings.get(dataEntityId);
-                StorageNode newResponsibleNode = getResponsibleNode(dataEntityId);
+                StorageNode newResponsibleNode = getStorageNodeResponsibleForStoring(dataEntityId);
                 if (!oldResponsibleNode.equals(newResponsibleNode)) {
                     dataIdsToBeMigrated.add(dataEntityId);
                     newMapping.put(dataEntityId, newResponsibleNode);

@@ -100,4 +100,11 @@ export class ShareService {
             id: id,
         })
     }
+
+    deleteData(id: number) {
+        this.send({
+            command: 'deleteData',
+            id: id,
+        })
+    }
 }
