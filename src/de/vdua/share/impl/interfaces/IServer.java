@@ -9,16 +9,16 @@ import java.util.HashSet;
 public interface IServer {
     void changeCapacities(HashMap<StorageNode, Double> capacities);
 
-    StorageNode addStorageNode();
-
-    HashSet<StorageNode> getStorageNodes();
-
     void setStretchFactor(double stretchFactor);
-
     double getStretchFactor();
 
-    int getStorageNodeIdResponsibleForStoring(DataEntity entity);
+    void registerStorageNode(StorageNode storageNode);
+    void unregisterStorageNode(StorageNode storageNode);
+    HashSet<StorageNode> getStorageNodes();
+    StorageNode getStorageNodeResponsibleForStoring(DataEntity entity);
+
+    void registerStorageLocation(DataEntity entity, StorageNode responsibleNode);
+    void unregisterStorageLocation(DataEntity entity);
 
     void addServerListener(IServerListener listener);
-
 }

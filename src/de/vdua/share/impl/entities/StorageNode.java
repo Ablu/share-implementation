@@ -1,7 +1,6 @@
 package de.vdua.share.impl.entities;
 
 import de.vdua.share.impl.interfaces.DoubleHashable;
-import de.vdua.share.impl.subjects.StorageNodesSubject;
 
 import java.math.BigDecimal;
 import java.util.*;

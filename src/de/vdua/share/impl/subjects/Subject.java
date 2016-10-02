@@ -1,5 +1,8 @@
 package de.vdua.share.impl.subjects;
 
+import de.vdua.share.impl.interfaces.IChangeListener;
+
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +14,7 @@ public abstract class Subject extends Thread {
 
     private BlockingQueue<Object> messageQueue;
     private boolean running;
+    private ArrayList<IChangeListener> listeners = new ArrayList<>();
 
     public Subject() {
         messageQueue = new LinkedBlockingQueue<Object>();
@@ -76,4 +80,16 @@ public abstract class Subject extends Thread {
     protected abstract void init();
     protected abstract void onMessageReceived(Object message);
     protected abstract void onTimeout();
+
+    void emitChange() {
+        listeners.forEach(IChangeListener::onChange);
+    }
+
+    void clearChangeListeners() {
+        listeners.clear();
+    }
+
+    public void addChangeListener(IChangeListener listener) {
+        listeners.add(listener);
+    }
 }

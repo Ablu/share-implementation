@@ -19,16 +19,11 @@ export class IntervalUpdaterComponent {
     }
 
     private updateCapacities() {
-        let capacitySum = 0;
-        for (let node of this.storageNodes) {
-            capacitySum += +node.capacity;
-        }
-
         var newCapacities = [];
         for (let node of this.storageNodes) {
             newCapacities.push({
                 id: node.id,
-                capacity: node.capacity / capacitySum,
+                capacity: +node.capacity,
             });
         }
         this.shareService.updateCapacities(newCapacities);

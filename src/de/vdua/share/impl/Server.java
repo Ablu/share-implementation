@@ -5,14 +5,14 @@ import de.vdua.share.impl.entities.StorageNode;
 import de.vdua.share.impl.interfaces.AbstractServer;
 import de.vdua.share.impl.interfaces.DoubleHashable;
 import de.vdua.share.impl.interfaces.IServer;
-import de.vdua.share.impl.interfaces.IServerListener;
 import de.vdua.share.impl.mappings.ConsistentHashMap;
 import de.vdua.share.impl.mappings.FinalMappingFactory;
 import de.vdua.share.impl.mappings.StorageNodeCHMFactory;
-import de.vdua.share.impl.subjects.Subject;
 
-import java.util.*;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by postm on 17-Aug-16.
@@ -20,7 +20,6 @@ import java.util.Map;
 public class Server extends AbstractServer implements IServer {
 
     private HashSet<StorageNode> storageNodes = new HashSet<StorageNode>();
-    private Map<Integer, Subject> storageNodeSubjects = new HashMap<>();
     private double stretchFactor;
 
     private ConsistentHashMap<ConsistentHashMap<StorageNode>> nodeMapping;
@@ -30,27 +29,36 @@ public class Server extends AbstractServer implements IServer {
         this.stretchFactor = stretchFactor;
     }
 
-    //Expose manipulation methods
-
     @Override
     public synchronized void changeCapacities(HashMap<StorageNode, Double> capacities) {
-        //Check invariant
+        if (capacities.isEmpty()) {
+            return;
+        }
+
         double totalCapacity = 0;
-        for (Double d : capacities.values())
+        for (Double d : capacities.values()) {
             totalCapacity += d;
-        if (Math.abs(totalCapacity - 1.0) > 0.00001)
-            throw new IllegalStateException("Expected capacity to sum up to 1! Capacity was: " + totalCapacity);
-        //Update capacities
-        capacities.forEach((storageNode, capacity) -> storageNode.setCapacity(capacity, getStretchFactor()));
+        }
+
+        if (totalCapacity == 0.0) {
+            return;
+        }
+
+        final double frozenTotalCapacity = totalCapacity;
+
+        capacities.forEach((storageNode, capacity) -> {
+                storageNode.setCapacity(capacity / frozenTotalCapacity, getStretchFactor());
+        });
         updateMapping();
         moveDataEntitiesAccordingToNewMapping();
     }
 
-    @Override
-    public synchronized StorageNode addStorageNode() {
-        StorageNode newNode = new StorageNode(0.0, getStretchFactor());
-        storageNodes.add(newNode);
-        return newNode;
+    public synchronized void registerStorageNode(StorageNode storageNode) {
+        storageNodes.add(storageNode);
+    }
+
+    public synchronized void unregisterStorageNode(StorageNode storageNode) {
+        storageNodes.remove(storageNode);
     }
 
     @Override
@@ -69,10 +77,6 @@ public class Server extends AbstractServer implements IServer {
         boolean useVerification = false;
         FinalMappingFactory factory = new FinalMappingFactory(new StorageNodeCHMFactory(this.storageNodes, useVerification), useVerification);
         this.nodeMapping = factory.createConsistentHashMap();
-
-
-
-        fireOnMappingUpdate();
     }
 
     @Override
@@ -81,17 +85,21 @@ public class Server extends AbstractServer implements IServer {
     }
 
     @Override
-    public synchronized void storeData(DataEntity entity) {
-        StorageNode responsibleNode = this.nodeMapping.getElement(entity).getElement(entity);
-        this.allStoredDataMappings.put(entity.getId(), responsibleNode);
-        super.fireOnIssueStore(responsibleNode.getId(), entity.getId(), entity.getData());
+    public StorageNode getStorageNodeResponsibleForStoring(DataEntity entity) {
+        return this.nodeMapping.getElement(entity).getElement(entity);
     }
 
-    public synchronized void deleteData(DataEntity entity) {
-        StorageNode responsibleNode = getResponsibleNode(entity);
+    public synchronized void storeData(DataEntity entity) {
+        StorageNode responsibleNode = this.nodeMapping.getElement(entity).getElement(entity);
+        registerStorageLocation(entity, responsibleNode);
+    }
+
+    public void registerStorageLocation(DataEntity entity, StorageNode responsibleNode) {
+        this.allStoredDataMappings.put(entity.getId(), responsibleNode);
+    }
+
+    public void unregisterStorageLocation(DataEntity entity) {
         this.allStoredDataMappings.remove(entity.getId());
-        responsibleNode.getSubject().deleteData(entity);
-        super.fireOnIssueDelete(responsibleNode.getId(), entity.getId());
     }
 
     private StorageNode getResponsibleNode(DataEntity entity) {

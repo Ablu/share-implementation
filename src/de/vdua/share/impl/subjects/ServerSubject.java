@@ -1,49 +1,26 @@
 package de.vdua.share.impl.subjects;
 
+import de.vdua.share.impl.entities.DataEntity;
+import de.vdua.share.impl.entities.StorageNode;
 import de.vdua.share.impl.interfaces.IServer;
-import de.vdua.share.impl.interfaces.IServerListener;
-import de.vdua.share.impl.subjects.message.DeleteMessage;
-import de.vdua.share.impl.subjects.message.MoveMessage;
-import de.vdua.share.impl.subjects.message.StorageNodeIntroductionMessage;
-import de.vdua.share.impl.subjects.message.StoreMessage;
+import de.vdua.share.impl.subjects.message.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class ServerSubject extends Subject {
 
     private IServer server;
-    private Map<Integer, StorageNodesSubject> storageNodeSubjects = new HashMap<>();
+    private Map<Integer, StorageNodeSubject> storageNodeSubjects = new HashMap<>();
 
     public ServerSubject(IServer server) {
         this.server = server;
-        this.server.addServerListener(new IServerListener() {
-            @Override
-            public void onMappingUpdate(IServer eventServer) {
-            }
-
-            @Override
-            public void onIssueStore(int storageNodeId, int dataId, Object data) {
-                StoreMessage storeMessage = new StoreMessage();
-                storeMessage.dataId = dataId;
-                storeMessage.data = data;
-                storageNodeSubjects.get(storageNodeId).send(storeMessage);
-            }
-
-            @Override
-            public void onIssueDelete(int storageNodeId, int dataId) {
-                DeleteMessage deleteMessage = new DeleteMessage();
-                deleteMessage.dataId = dataId;
-                storageNodeSubjects.get(storageNodeId).send(deleteMessage);
-            }
-
-            @Override
-            public void onIssueMove(int sourceStorageNodeId, int targetStorageNodeId, int dataId) {
-                MoveMessage moveMessage = new MoveMessage();
-                moveMessage.dataId = dataId;
-                moveMessage.target = storageNodeSubjects.get(targetStorageNodeId);
-                storageNodeSubjects.get(sourceStorageNodeId).send(moveMessage);
-            }
+        this.server.addServerListener((sourceStorageNodeId, targetStorageNodeId, dataId) -> {
+            MoveMessage moveMessage = new MoveMessage();
+            moveMessage.dataId = dataId;
+            moveMessage.target = storageNodeSubjects.get(targetStorageNodeId);
+            storageNodeSubjects.get(sourceStorageNodeId).send(moveMessage);
         });
     }
 
@@ -53,14 +30,81 @@ public class ServerSubject extends Subject {
 
     @Override
     protected void onMessageReceived(Object message) {
-        if (message instanceof StorageNodeIntroductionMessage) {
-            StorageNodeIntroductionMessage storageNodeIntroductionMessage = (StorageNodeIntroductionMessage) message;
-            storageNodeSubjects.put(storageNodeIntroductionMessage.id, storageNodeIntroductionMessage.subject);
+        if (message instanceof StorageNodeJoinMessage) {
+            StorageNodeJoinMessage storageNodeJoinMessage = (StorageNodeJoinMessage) message;
+            StorageNode newNode = new StorageNode(0.0, server.getStretchFactor());
+            storageNodeSubjects.put(newNode.getId(), storageNodeJoinMessage.subject);
+
+            final ConfirmJoinMessage joinMessage = new ConfirmJoinMessage();
+            joinMessage.nodeId = newNode.getId();
+            storageNodeJoinMessage.subject.send(joinMessage);
+
+            HashMap<StorageNode, Double> newCapacities = new HashMap<>();
+            for (StorageNode node : server.getStorageNodes()) {
+                newCapacities.put(node, node.getCapacity());
+            }
+            newCapacities.put(newNode, 0.0);
+
+            server.registerStorageNode(newNode);
+            server.changeCapacities(newCapacities);
+            emitChange();
+        } else if (message instanceof CapacityChangeMessage) {
+            CapacityChangeMessage capacityChange = (CapacityChangeMessage) message;
+            server.changeCapacities(capacityChange.newCapacities);
+            emitChange();
+        } else if (message instanceof StretchFactorUpdateMessage) {
+            StretchFactorUpdateMessage stretchFactorUpdate = (StretchFactorUpdateMessage) message;
+            server.setStretchFactor(stretchFactorUpdate.stretchFactor);
+            emitChange();
+        } else if (message instanceof StoreDataMessage) {
+            StoreDataMessage storeData = (StoreDataMessage) message;
+            DataEntity data = new DataEntity(storeData.data);
+            StorageNode node = server.getStorageNodeResponsibleForStoring(data);
+
+            StoreDataInNodeMessage storeDataInNodeMessage = new StoreDataInNodeMessage();
+            storeDataInNodeMessage.dataId = data.getId();
+            storeDataInNodeMessage.data = data.getData();
+            storageNodeSubjects.get(node.getId()).send(storeDataInNodeMessage);
+        } else if (message instanceof StorageNodeLeaveMessage){
+            StorageNodeLeaveMessage storageNodeLeave = (StorageNodeLeaveMessage) message;
+            final int leavingNodeId = storageNodeLeave.nodeId;
+
+            HashMap<StorageNode, Double> newCapacities = new HashMap<>();
+            for (StorageNode node : server.getStorageNodes()) {
+                final double newCapacity = node.getId() == leavingNodeId ? 0.0 : node.getCapacity();
+                newCapacities.put(node, newCapacity);
+            }
+            server.changeCapacities(newCapacities);
+
+            StorageNode nodeToDelete = null;
+            for (StorageNode node : server.getStorageNodes()) {
+                if (node.getId() == leavingNodeId) {
+                    nodeToDelete = node;
+                }
+            }
+            server.unregisterStorageNode(nodeToDelete);
+
+            StorageNodeSubject leavingSubject = storageNodeSubjects.get(leavingNodeId);
+            leavingSubject.send(new ConfirmLeaveMessage());
+
+            storageNodeSubjects.remove(leavingNodeId);
+            emitChange();
+        } else {
+            final String errorMessage = "Unexpected message: " + message;
+            throw new IllegalStateException(errorMessage);
         }
     }
 
     @Override
     protected void onTimeout() {
 
+    }
+
+    public HashSet<StorageNode> getStorageNodes() {
+        return server.getStorageNodes();
+    }
+
+    public double getStretchFactor() {
+        return server.getStretchFactor();
     }
 }

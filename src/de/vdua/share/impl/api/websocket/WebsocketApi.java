@@ -1,13 +1,13 @@
 package de.vdua.share.impl.api.websocket;
 
-import com.google.gson.internal.LinkedTreeMap;
-import de.vdua.share.impl.api.interfaces.Api;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.vdua.share.impl.entities.DataEntity;
+import com.google.gson.internal.LinkedTreeMap;
+import de.vdua.share.impl.api.interfaces.Api;
 import de.vdua.share.impl.entities.StorageNode;
-import de.vdua.share.impl.interfaces.IServer;
+import de.vdua.share.impl.subjects.ServerSubject;
+import de.vdua.share.impl.subjects.StorageNodeSubject;
+import de.vdua.share.impl.subjects.message.*;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -19,26 +19,56 @@ import java.util.*;
 public class WebsocketApi extends WebSocketServer implements Api {
     private Collection<WebSocket> clientConnections = new ArrayList<>();
     private Gson gson = new GsonBuilder().create();
-    private IServer server;
+    private ServerSubject serverSubject;
+
+    private Set<StorageNodeSubject> storageNodeSubjects =
+            Collections.newSetFromMap(new WeakHashMap<StorageNodeSubject, Boolean>());
 
     private class State {
         HashSet<StorageNode> storageNodes;
         double stretchFactor;
 
         State() {
-            storageNodes = server.getStorageNodes();
-            stretchFactor = server.getStretchFactor();
+            storageNodes = serverSubject.getStorageNodes();
+            stretchFactor = serverSubject.getStretchFactor();
         }
     }
 
-    private State getState() {
-        return new State();
+    private HashMap<String, Object> getState() {
+        HashMap<String, Object> tree = new HashMap<>();
+        tree.put("stretchFactor", serverSubject.getStretchFactor());
+        ArrayList<HashMap<String, Object>> storageNodes = new ArrayList<>();
+
+        for (StorageNode node : serverSubject.getStorageNodes()) {
+            HashMap<String, Object> storageNodeObject = new HashMap<>();
+            storageNodeObject.put("id", node.getId());
+            storageNodeObject.put("capacity", node.getCapacity());
+            storageNodeObject.put("intervals", node.getIntervals()); // bit hacky...
+
+            ArrayList<HashMap<String, Object>> storedData = new ArrayList<>();
+            for (StorageNodeSubject subject : storageNodeSubjects) {
+                if (subject.getNodeId() == node.getId()) {
+                    subject.getStoredData().forEach((id, value) -> {
+                        HashMap<String, Object> data = new HashMap<>();
+                        data.put("id", id);
+                        data.put("data", value);
+                        storedData.add(data);
+                    });
+                }
+            }
+            storageNodeObject.put("storedData", storedData);
+
+            storageNodes.add(storageNodeObject);
+        }
+        tree.put("storageNodes", storageNodes);
+
+        return tree;
     }
 
-    public WebsocketApi(InetSocketAddress bindAddress, IServer server) throws UnknownHostException {
+    public WebsocketApi(InetSocketAddress bindAddress, ServerSubject subject) throws UnknownHostException {
         super(bindAddress);
-        this.server = server;
-        server.addServerListener(eventServer -> sendUpdate());
+        serverSubject = subject;
+        serverSubject.addChangeListener(this::sendUpdate);
     }
 
     private void sendUpdate() {
@@ -50,7 +80,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
         start();
     }
 
-    private void broadcast(Object message) {
+    private synchronized void broadcast(Object message) {
         synchronized (clientConnections) {
             for (WebSocket socket : clientConnections) {
                 socket.send(gson.toJson(message));
@@ -59,12 +89,9 @@ public class WebsocketApi extends WebSocketServer implements Api {
     }
 
     @Override
-    public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
+    public synchronized void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
         try {
-            System.out.println("on open");
-            synchronized (clientConnections) {
-                clientConnections.add(webSocket);
-            }
+            clientConnections.add(webSocket);
             broadcast(getState());
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -72,19 +99,16 @@ public class WebsocketApi extends WebSocketServer implements Api {
     }
 
     @Override
-    public void onClose(WebSocket webSocket, int i, String s, boolean b) {
+    public synchronized void onClose(WebSocket webSocket, int i, String s, boolean b) {
         try {
-            System.out.println("on close");
-            synchronized (clientConnections) {
-                clientConnections.remove(webSocket);
-            }
+            clientConnections.remove(webSocket);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }
 
     private StorageNode getStorageNodeById(int id) {
-        for (StorageNode node : server.getStorageNodes()) {
+        for (StorageNode node : serverSubject.getStorageNodes()) {
             if (node.getId() == id) {
                 return node;
             }
@@ -100,13 +124,21 @@ public class WebsocketApi extends WebSocketServer implements Api {
 
             switch (command) {
                 case "addStorageNode":
-                    System.out.println("Adding storage node!");
-                    server.addStorageNode();
+                    StorageNodeSubject newNode = new StorageNodeSubject();
+                    newNode.addChangeListener(this::sendUpdate);
+                    storageNodeSubjects.add(newNode);
+                    newNode.start();
+
+                    StorageNodeJoinMessage joinMessage = new StorageNodeJoinMessage();
+                    joinMessage.subject = newNode;
+                    serverSubject.send(joinMessage);
                     break;
-                case "getStorageNodeIdResponsibleForStoring":
+                case "storeData":
                     String data = (String) message.get("data");
                     System.out.println("Storing data '" + data + "'!");
-                    server.getStorageNodeIdResponsibleForStoring(new DataEntity(data));
+                    StoreDataMessage storeMessage = new StoreDataMessage();
+                    storeMessage.data = data;
+                    serverSubject.send(storeMessage);
                     break;
                 case "updateCapacities":
                     ArrayList<LinkedTreeMap> capacities = (ArrayList<LinkedTreeMap>) message.get("capacities");
@@ -118,23 +150,27 @@ public class WebsocketApi extends WebSocketServer implements Api {
                         double newCapacity = (double) capacity.get("capacity");
                         newCapacities.put(getStorageNodeById(id), newCapacity);
                     }
-                    server.changeCapacities(newCapacities);
+                    CapacityChangeMessage capacityChangeMessage = new CapacityChangeMessage();
+                    capacityChangeMessage.newCapacities = newCapacities;
+                    serverSubject.send(capacityChangeMessage);
                     break;
                 case "updateStretchFactor":
                     double stretchFactor = (double) message.get("factor");
-                    server.setStretchFactor(stretchFactor);
+                    StretchFactorUpdateMessage stretchFactorUpdateMessage = new StretchFactorUpdateMessage();
+                    stretchFactorUpdateMessage.stretchFactor = stretchFactor;
+                    serverSubject.send(stretchFactorUpdateMessage);
                     break;
                 case "deleteStorageNode":
                     int idToDelete = ((Double) message.get("id")).intValue();
-                    System.out.println(idToDelete);
-                    // TODO: leave
+                    StorageNodeLeaveMessage storageNodeLeaveMessage = new StorageNodeLeaveMessage();
+                    storageNodeLeaveMessage.nodeId = idToDelete;
+                    serverSubject.send(storageNodeLeaveMessage);
+                    break;
                 default:
-                    System.out.print("Received unknown command: ");
-                    System.out.println(message);
+                    System.err.print("Received unknown command: ");
+                    System.err.println(message);
                     break;
             }
-            sendUpdate();
-
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.err.println(Arrays.toString(e.getStackTrace()));
