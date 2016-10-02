@@ -32,7 +32,11 @@ public class ServerSubject extends Subject {
     protected void onMessageReceived(Object message) {
         if (message instanceof StorageNodeJoinMessage) {
             StorageNodeJoinMessage storageNodeJoinMessage = (StorageNodeJoinMessage) message;
-            StorageNode newNode = new StorageNode(0.0, server.getStretchFactor());
+
+            boolean isFirstNode = server.getStorageNodes().isEmpty();
+            final double initialCapacity = isFirstNode ? 1.0 : 0.0;
+
+            StorageNode newNode = new StorageNode(initialCapacity, server.getStretchFactor());
             storageNodeSubjects.put(newNode.getId(), storageNodeJoinMessage.subject);
 
             final ConfirmJoinMessage joinMessage = new ConfirmJoinMessage();
@@ -43,7 +47,7 @@ public class ServerSubject extends Subject {
             for (StorageNode node : server.getStorageNodes()) {
                 newCapacities.put(node, node.getCapacity());
             }
-            newCapacities.put(newNode, 0.0);
+            newCapacities.put(newNode, initialCapacity);
 
             server.registerStorageNode(newNode);
             server.changeCapacities(newCapacities);
