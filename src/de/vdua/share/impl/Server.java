@@ -9,10 +9,7 @@ import de.vdua.share.impl.mappings.ConsistentHashMap;
 import de.vdua.share.impl.mappings.FinalMappingFactory;
 import de.vdua.share.impl.mappings.StorageNodeCHMFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by postm on 17-Aug-16.
@@ -47,7 +44,7 @@ public class Server extends AbstractServer implements IServer {
         final double frozenTotalCapacity = totalCapacity;
 
         capacities.forEach((storageNode, capacity) -> {
-                storageNode.setCapacity(capacity / frozenTotalCapacity, getStretchFactor());
+            storageNode.setCapacity(capacity / frozenTotalCapacity, getStretchFactor());
         });
         updateMapping();
         moveDataEntitiesAccordingToNewMapping();
@@ -112,18 +109,16 @@ public class Server extends AbstractServer implements IServer {
     }
 
     private void moveDataEntitiesAccordingToNewMapping() {
-        List<Integer> dataIdsToBeMigrated = new ArrayList<>();
+        List<Integer> dataIdsToBeMigrated = new LinkedList<>();
         HashMap<Integer, StorageNode> newMapping = new HashMap<>();
-        synchronized (this.allStoredDataMappings) {
-            for (Integer dataEntityId : this.allStoredDataMappings.keySet()) {
-                StorageNode oldResponsibleNode = this.allStoredDataMappings.get(dataEntityId);
-                StorageNode newResponsibleNode = getStorageNodeResponsibleForStoring(dataEntityId);
-                if (!oldResponsibleNode.equals(newResponsibleNode)) {
-                    dataIdsToBeMigrated.add(dataEntityId);
-                    newMapping.put(dataEntityId, newResponsibleNode);
-                } else {
-                    newMapping.put(dataEntityId, oldResponsibleNode);
-                }
+        for (Integer dataEntityId : this.allStoredDataMappings.keySet()) {
+            StorageNode oldResponsibleNode = this.allStoredDataMappings.get(dataEntityId);
+            StorageNode newResponsibleNode = getStorageNodeResponsibleForStoring(dataEntityId);
+            if (!oldResponsibleNode.equals(newResponsibleNode)) {
+                dataIdsToBeMigrated.add(dataEntityId);
+                newMapping.put(dataEntityId, newResponsibleNode);
+            } else {
+                newMapping.put(dataEntityId, oldResponsibleNode);
             }
         }
         for (Integer movingDataId : dataIdsToBeMigrated) {
