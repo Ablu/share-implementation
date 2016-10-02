@@ -10,8 +10,6 @@ public class StorageNodeSubject extends Subject {
     private int nodeId;
     private final HashMap<Integer, Object> storedData = new HashMap<>();
 
-    private ServerSubject serverSubject;
-
     @Override
     protected void init() {
     }
