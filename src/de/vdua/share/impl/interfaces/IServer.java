@@ -19,7 +19,7 @@ public interface IServer {
     StorageNode getStorageNodeResponsibleForStoring(int dataId);
 
     void registerStorageLocation(DataEntity entity, StorageNode responsibleNode);
-    void unregisterStorageLocation(DataEntity entity);
+    void unregisterStorageLocation(int dataId);
 
     void addServerListener(IServerListener listener);
 }

@@ -93,8 +93,8 @@ public class Server extends AbstractServer implements IServer {
         this.allStoredDataMappings.put(entity.getId(), responsibleNode);
     }
 
-    public void unregisterStorageLocation(DataEntity entity) {
-        this.allStoredDataMappings.remove(entity.getId());
+    public void unregisterStorageLocation(int dataId) {
+        this.allStoredDataMappings.remove(dataId);
     }
 
     public StorageNode getStorageNodeResponsibleForStoring(DataEntity entity) {

@@ -65,6 +65,17 @@ public class ServerSubject extends Subject {
             storeDataInNodeMessage.dataId = data.getId();
             storeDataInNodeMessage.data = data.getData();
             storageNodeSubjects.get(node.getId()).send(storeDataInNodeMessage);
+
+            server.registerStorageLocation(data, node);
+        } else if (message instanceof DeleteMessage) {
+            DeleteMessage deleteMessage = (DeleteMessage) message;
+            StorageNode node = server.getStorageNodeResponsibleForStoring(deleteMessage.dataId);
+
+            DeleteDataFromNodeMessage deleteDataFromNodeMessage = new DeleteDataFromNodeMessage();
+            deleteDataFromNodeMessage.dataId = deleteMessage.dataId;
+            storageNodeSubjects.get(node.getId()).send(deleteDataFromNodeMessage);
+
+            server.unregisterStorageLocation(deleteMessage.dataId);
         } else if (message instanceof StorageNodeLeaveMessage) {
             StorageNodeLeaveMessage storageNodeLeave = (StorageNodeLeaveMessage) message;
             final int leavingNodeId = storageNodeLeave.nodeId;
@@ -89,13 +100,6 @@ public class ServerSubject extends Subject {
 
             storageNodeSubjects.remove(leavingNodeId);
             emitChange();
-        } else if (message instanceof DeleteMessage) {
-            DeleteMessage deleteMessage = (DeleteMessage) message;
-            StorageNode node = server.getStorageNodeResponsibleForStoring(deleteMessage.dataId);
-
-            DeleteDataFromNodeMessage deleteDataFromNodeMessage = new DeleteDataFromNodeMessage();
-            deleteDataFromNodeMessage.dataId = deleteMessage.dataId;
-            storageNodeSubjects.get(node.getId()).send(deleteDataFromNodeMessage);
         } else {
             final String errorMessage = "Unexpected message: " + message;
             throw new IllegalStateException(errorMessage);
