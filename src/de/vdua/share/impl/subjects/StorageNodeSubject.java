@@ -1,9 +1,6 @@
 package de.vdua.share.impl.subjects;
 
-import de.vdua.share.impl.subjects.message.ConfirmJoinMessage;
-import de.vdua.share.impl.subjects.message.ConfirmLeaveMessage;
-import de.vdua.share.impl.subjects.message.DeleteDataFromNodeMessage;
-import de.vdua.share.impl.subjects.message.StoreDataInNodeMessage;
+import de.vdua.share.impl.subjects.message.*;
 
 import java.util.HashMap;
 
@@ -36,6 +33,18 @@ public class StorageNodeSubject extends Subject {
         } else if (message instanceof DeleteDataFromNodeMessage) {
             DeleteDataFromNodeMessage deleteMessage = (DeleteDataFromNodeMessage) message;
             storedData.remove(deleteMessage.dataId);
+            emitChange();
+        } else if (message instanceof MoveMessage) {
+            MoveMessage moveMessage = (MoveMessage) message;
+
+            DataForwardMessage dataForwardMessage = new DataForwardMessage();
+            dataForwardMessage.dataId = moveMessage.dataId;
+            dataForwardMessage.data = storedData.remove(moveMessage.dataId);
+            moveMessage.target.send(dataForwardMessage);
+            emitChange();
+        } else if (message instanceof DataForwardMessage) {
+            DataForwardMessage forwardMessage = (DataForwardMessage) message;
+            storedData.put(forwardMessage.dataId, forwardMessage.data);
             emitChange();
         } else {
             throw new IllegalStateException("Unexpected message: " + message);
