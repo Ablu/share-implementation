@@ -39,7 +39,6 @@ export class ShareService {
 
     private onMessage(message: MessageEvent) {
         let state = JSON.parse(message.data);
-        console.log(state);
         this.stretchFactorUpdated.next(state.stretchFactor);
 
         let receivedStorageNodes = state.storageNodes;
