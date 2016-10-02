@@ -27,7 +27,7 @@ import {StorageNode} from "./entities/storagenode";
         <div class="distribute">
             <datastorer></datastorer>
             <span class="spacer"></span>
-            <stretch-factor-edit></stretch-factor-edit>
+            <stretch-factor-edit [storageNodes]="storageNodes"></stretch-factor-edit>
             <span class="spacer"></span>
             <interval-updater [storageNodes]="storageNodes"></interval-updater>
         </div>
