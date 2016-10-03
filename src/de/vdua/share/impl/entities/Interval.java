@@ -12,6 +12,8 @@ public class Interval {
 
     public static final Interval NULL_INSTANCE = new Interval(0.0, 0.0, false, false);
 
+    private Integer hashCode;
+
     private final double start;
     private final double end;
     private final boolean includeStart;
@@ -22,6 +24,15 @@ public class Interval {
         this.end = end;
         this.includeStart = true;
         this.includeEnd = false;
+        this.hashCode = null;
+    }
+
+    public Interval(double start, double end, int hashCode) {
+        this.start = start;
+        this.end = end;
+        this.includeStart = true;
+        this.includeEnd = false;
+        this.hashCode = hashCode;
     }
 
     public Interval(double start, double end, boolean includeStart, boolean includeEnd) {
@@ -29,11 +40,19 @@ public class Interval {
         this.end = end;
         this.includeStart = includeStart;
         this.includeEnd = includeEnd;
+        this.hashCode = null;
+    }
+
+    public Interval(double start, double end, boolean includeStart, boolean includeEnd, int hashCode) {
+        this.start = start;
+        this.end = end;
+        this.includeStart = includeStart;
+        this.includeEnd = includeEnd;
+        this.hashCode = hashCode;
     }
 
     public boolean contains(double val) {
         boolean result = (val > start || (start == val && includeStart)) && (val < end || (end == val && includeEnd));
-        System.out.println("Interval(" + start + "," + end + "," + includeStart + "," + includeEnd + ").contains(" + val + ") == " + result);
         return result;
     }
 
@@ -162,4 +181,16 @@ public class Interval {
         return includeEnd;
     }
 
+    public void setHashCode(Integer hashCode) {
+        this.hashCode = hashCode;
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.hashCode != null) {
+            return this.hashCode;
+        } else {
+            return super.hashCode();
+        }
+    }
 }

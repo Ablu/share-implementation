@@ -16,6 +16,6 @@ public class ResponsibilityIntervalStorageMapping extends Tuple<Interval, Storag
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return getT1().hashCode();
     }
 }

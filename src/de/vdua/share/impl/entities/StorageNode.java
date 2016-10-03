@@ -21,7 +21,7 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     }
 
     private static List<Interval> devideInterval(Interval initialInterval) {
-        LinkedList<Interval> devide = new LinkedList<Interval>();
+        List<Interval> devide = new ArrayList<>(10);
         BigDecimal end = new BigDecimal(initialInterval.getEnd());
         devide.add(new Interval(initialInterval.getStart(), Math.min(1.0, end.doubleValue())));
         end = end.subtract(new BigDecimal(1));
@@ -34,7 +34,11 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     }
 
     public void updateInterval(double stretchFactor) {
-        this.intervals = devideInterval(genInterval(capacity, stretchFactor));
+        List<Interval> newIntervals = devideInterval(genInterval(capacity, stretchFactor));
+        for (int i = 0; i < newIntervals.size() && i < this.intervals.size(); i++) {
+            newIntervals.get(i).setHashCode(this.intervals.get(i).hashCode());
+        }
+        this.intervals = newIntervals;
     }
 
     private Interval genInterval(double capacity, double stretchFactor) {
