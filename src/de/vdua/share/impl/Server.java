@@ -94,8 +94,12 @@ public class Server extends AbstractServer implements IServer {
         this.allStoredDataMappings.remove(dataId);
     }
 
-    public StorageNode getStorageNodeResponsibleForStoring(DataEntity entity) {
-        return this.nodeMapping.getElement(entity).getElement(entity);
+    public StorageNode getStorageNodeResponsibleForStoring(DoubleHashable entity) {
+        ConsistentHashMap<StorageNode> mappingToNode = this.nodeMapping.getElement(entity);
+        if (mappingToNode != null)
+            return mappingToNode.getElement(entity);
+        else
+            return null;
     }
 
     public StorageNode getStorageNodeResponsibleForStoring(int dataId) {
@@ -105,7 +109,7 @@ public class Server extends AbstractServer implements IServer {
                 return dataId;
             }
         };
-        return this.nodeMapping.getElement(fakeDataEntity).getElement(fakeDataEntity);
+        return getStorageNodeResponsibleForStoring(fakeDataEntity);
     }
 
     private void moveDataEntitiesAccordingToNewMapping() {
@@ -114,7 +118,7 @@ public class Server extends AbstractServer implements IServer {
         for (Integer dataEntityId : this.allStoredDataMappings.keySet()) {
             StorageNode oldResponsibleNode = this.allStoredDataMappings.get(dataEntityId);
             StorageNode newResponsibleNode = getStorageNodeResponsibleForStoring(dataEntityId);
-            if (!oldResponsibleNode.equals(newResponsibleNode)) {
+            if (oldResponsibleNode != null && !oldResponsibleNode.equals(newResponsibleNode)) {
                 dataIdsToBeMigrated.add(dataEntityId);
                 newMapping.put(dataEntityId, newResponsibleNode);
             } else {
@@ -124,7 +128,9 @@ public class Server extends AbstractServer implements IServer {
         for (Integer movingDataId : dataIdsToBeMigrated) {
             StorageNode oldResponsibleNode = this.allStoredDataMappings.get(movingDataId);
             StorageNode newResponsibleNode = newMapping.get(movingDataId);
-            super.fireOnIssueMove(oldResponsibleNode.getId(), newResponsibleNode.getId(), movingDataId);
+            if (newResponsibleNode != null) {
+                super.fireOnIssueMove(oldResponsibleNode.getId(), newResponsibleNode.getId(), movingDataId);
+            }
         }
         this.allStoredDataMappings = newMapping;
     }

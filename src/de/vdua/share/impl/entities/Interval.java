@@ -193,4 +193,21 @@ public class Interval {
             return super.hashCode();
         }
     }
+
+    @Override
+    public String toString() {
+        String atReturn = "";
+        if (this.includeStart) {
+            atReturn += "[";
+        } else {
+            atReturn += "(";
+        }
+        atReturn += this.start + ", " + this.end;
+        if (this.includeEnd) {
+            atReturn += "]";
+        } else {
+            atReturn += ")";
+        }
+        return atReturn;
+    }
 }

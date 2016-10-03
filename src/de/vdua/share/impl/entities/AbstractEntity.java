@@ -20,7 +20,9 @@ public class AbstractEntity {
             synchronized (USED_IDS.get(subClass)) {
                 List<Integer> usedIds = USED_IDS.get(subClass);
                 do {
-                    generatedId = (int) (Math.random() * Integer.MAX_VALUE);
+                    double gen = Math.random();
+                    System.out.println(gen);
+                    generatedId = (int) (gen * Integer.MAX_VALUE);
                 } while (usedIds.contains(generatedId));
                 usedIds.add(generatedId);
             }

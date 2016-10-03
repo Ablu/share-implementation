@@ -33,6 +33,9 @@ public class ConsistentHashMap<E> {
     }
 
     public E getElement(int index) {
+        if(index == -1){
+            return null;
+        }
         return this.mappedElements[index];
     }
 
