@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class Server extends AbstractServer implements IServer {
 
-    private HashSet<StorageNode> storageNodes = new HashSet<StorageNode>();
+    private final HashSet<StorageNode> storageNodes = new HashSet<StorageNode>();
     private double stretchFactor;
 
     private ConsistentHashMap<ConsistentHashMap<StorageNode>> nodeMapping;
@@ -51,11 +51,15 @@ public class Server extends AbstractServer implements IServer {
     }
 
     public synchronized void registerStorageNode(StorageNode storageNode) {
-        storageNodes.add(storageNode);
+        synchronized (storageNodes) {
+            storageNodes.add(storageNode);
+        }
     }
 
     public synchronized void unregisterStorageNode(StorageNode storageNode) {
-        storageNodes.remove(storageNode);
+        synchronized (storageNodes) {
+            storageNodes.remove(storageNode);
+        }
     }
 
     @Override
@@ -66,13 +70,18 @@ public class Server extends AbstractServer implements IServer {
     @Override
     public synchronized void setStretchFactor(double stretchFactor) {
         this.stretchFactor = stretchFactor;
-        storageNodes.forEach(storageNode -> storageNode.updateInterval(stretchFactor));
+        synchronized (storageNodes) {
+            storageNodes.forEach(storageNode -> storageNode.updateInterval(stretchFactor));
+        }
         updateMapping();
     }
 
     private void updateMapping() {
         boolean useVerification = false;
-        FinalMappingFactory factory = new FinalMappingFactory(new StorageNodeCHMFactory(this.storageNodes, useVerification), useVerification);
+        FinalMappingFactory factory;
+        synchronized (storageNodes) {
+            factory = new FinalMappingFactory(new StorageNodeCHMFactory(this.storageNodes, useVerification), useVerification);
+        }
         this.nodeMapping = factory.createConsistentHashMap();
     }
 

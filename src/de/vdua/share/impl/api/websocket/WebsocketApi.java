@@ -24,44 +24,36 @@ public class WebsocketApi extends WebSocketServer implements Api {
     private Set<StorageNodeSubject> storageNodeSubjects =
             Collections.newSetFromMap(new WeakHashMap<StorageNodeSubject, Boolean>());
 
-    private class State {
-        HashSet<StorageNode> storageNodes;
-        double stretchFactor;
-
-        State() {
-            storageNodes = serverSubject.getStorageNodes();
-            stretchFactor = serverSubject.getStretchFactor();
-        }
-    }
-
     private HashMap<String, Object> getState() {
         HashMap<String, Object> tree = new HashMap<>();
         tree.put("type", "state");
         tree.put("stretchFactor", serverSubject.getStretchFactor());
         ArrayList<HashMap<String, Object>> storageNodes = new ArrayList<>();
 
-        for (StorageNode node : serverSubject.getStorageNodes()) {
-            HashMap<String, Object> storageNodeObject = new HashMap<>();
-            storageNodeObject.put("id", node.getId());
-            storageNodeObject.put("capacity", node.getCapacity());
-            storageNodeObject.put("intervals", node.getIntervals()); // bit hacky...
+        synchronized (serverSubject.getStorageNodes()) {
+            for (StorageNode node : serverSubject.getStorageNodes()) {
+                HashMap<String, Object> storageNodeObject = new HashMap<>();
+                storageNodeObject.put("id", node.getId());
+                storageNodeObject.put("capacity", node.getCapacity());
+                storageNodeObject.put("intervals", node.getIntervals()); // bit hacky...
 
-            ArrayList<HashMap<String, Object>> storedData = new ArrayList<>();
-            for (StorageNodeSubject subject : storageNodeSubjects) {
-                if (subject.getNodeId() == node.getId()) {
-                    synchronized (subject.lock) {
-                        subject.getStoredData().forEach((id, value) -> {
-                            HashMap<String, Object> data = new HashMap<>();
-                            data.put("id", id);
-                            data.put("data", value);
-                            storedData.add(data);
-                        });
+                ArrayList<HashMap<String, Object>> storedData = new ArrayList<>();
+                for (StorageNodeSubject subject : storageNodeSubjects) {
+                    if (subject.getNodeId() == node.getId()) {
+                        synchronized (subject.getStoredData()) {
+                            subject.getStoredData().forEach((id, value) -> {
+                                HashMap<String, Object> data = new HashMap<>();
+                                data.put("id", id);
+                                data.put("data", value);
+                                storedData.add(data);
+                            });
+                        }
                     }
                 }
-            }
-            storageNodeObject.put("storedData", storedData);
+                storageNodeObject.put("storedData", storedData);
 
-            storageNodes.add(storageNodeObject);
+                storageNodes.add(storageNodeObject);
+            }
         }
         tree.put("storageNodes", storageNodes);
 
@@ -74,7 +66,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
         serverSubject.addChangeListener(this::sendUpdate);
     }
 
-    private void sendUpdate() {
+    private synchronized void sendUpdate() {
         broadcast(getState());
     }
 
