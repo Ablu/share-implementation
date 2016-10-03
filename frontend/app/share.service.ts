@@ -41,8 +41,8 @@ export class ShareService {
         });
     }
 
-    private onMessage(message: MessageEvent) {
-        let message = JSON.parse(message.data);
+    private onMessage(messageEvent: MessageEvent) {
+        let message = JSON.parse(messageEvent.data);
 
         switch (message.type) {
             case "state":
