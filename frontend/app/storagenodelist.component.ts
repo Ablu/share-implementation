@@ -18,8 +18,10 @@ import {StorageNode} from "./entities/storagenode";
         border-spacing: 25px;
     }
     
-    .row > div {
-        display: table-cell;
+    @media only screen and (min-device-width:480px){
+        .row > div {
+            display: table-cell;
+        }
     }
     
     .data {

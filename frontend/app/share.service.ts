@@ -31,7 +31,7 @@ export class ShareService {
     }
 
     private createWebsocketConnection() {
-        this.websocket = new WebSocket('ws://localhost:9456/');
+        this.websocket = new WebSocket('ws://' + location.hostname + ':9456/');
         this.websocket.addEventListener('message', (message) => {
             this.onMessage(message);
         });
