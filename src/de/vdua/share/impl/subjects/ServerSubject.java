@@ -113,6 +113,7 @@ public class ServerSubject extends Subject {
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.err.println(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
     }
 

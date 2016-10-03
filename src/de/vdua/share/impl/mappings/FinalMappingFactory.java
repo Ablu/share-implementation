@@ -26,26 +26,32 @@ public class FinalMappingFactory extends ConsistentHashMapFactory<ConsistentHash
             Interval interval = firstMapping.getInterval(i);
             LinkedList<ResponsibilityIntervalStorageMapping> possibleNodes = firstMapping.getElement(i);
 
-            if(possibleNodes == null){
-                int test = 0;
-                test++;
-            }
-
-            //Create second level intervals
-            StorageNode[] finalMappedNodes = new StorageNode[possibleNodes.size() + 1];
+            StorageNode[] finalMappedNodes;
             TreeSet<Double> secondLvlIntervalBorder = new TreeSet<>((d1, d2) -> d1.compareTo(d2));
-            for (ResponsibilityIntervalStorageMapping possibleNodeMapping : possibleNodes) {
-                secondLvlIntervalBorder.add(possibleNodeMapping.getHashAsDouble());
-            }
-            //Map intervals to nodes
-            Interval[] secondLvlIntervals = genBagIntervalsFromBorderSet(secondLvlIntervalBorder);
-            for (ResponsibilityIntervalStorageMapping possibleNodeMapping : possibleNodes) {
-                for (int j = 0; j < secondLvlIntervals.length; j++) {
-                    if (secondLvlIntervals[j].contains(possibleNodeMapping.getHashAsDouble())) {
-                        finalMappedNodes[j] = possibleNodeMapping.getT2();
+            Interval[] secondLvlIntervals;
+            if (possibleNodes != null) {
+                finalMappedNodes = new StorageNode[possibleNodes.size() + 1];
+
+                //Create second level intervals
+                for (ResponsibilityIntervalStorageMapping possibleNodeMapping : possibleNodes) {
+                    secondLvlIntervalBorder.add(possibleNodeMapping.getHashAsDouble());
+                }
+
+                //Map intervals to nodes
+                secondLvlIntervals = genBagIntervalsFromBorderSet(secondLvlIntervalBorder);
+                for (ResponsibilityIntervalStorageMapping possibleNodeMapping : possibleNodes) {
+                    for (int j = 0; j < secondLvlIntervals.length; j++) {
+                        if (secondLvlIntervals[j].contains(possibleNodeMapping.getHashAsDouble())) {
+                            finalMappedNodes[j] = possibleNodeMapping.getT2();
+                        }
                     }
                 }
+            } else {
+                finalMappedNodes = new StorageNode[1];
+                secondLvlIntervals = new Interval[]{new Interval(0,1)};
             }
+
+
             //First interval is not mapped
             //-> add mapping to first interval
             finalMappedNodes[0] = finalMappedNodes[finalMappedNodes.length - 1];
