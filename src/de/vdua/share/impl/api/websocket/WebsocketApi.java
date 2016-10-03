@@ -49,13 +49,14 @@ public class WebsocketApi extends WebSocketServer implements Api {
             ArrayList<HashMap<String, Object>> storedData = new ArrayList<>();
             for (StorageNodeSubject subject : storageNodeSubjects) {
                 if (subject.getNodeId() == node.getId()) {
-                    final HashMap<Integer, Object> listCopy = new HashMap<>(subject.getStoredData());
-                    listCopy.forEach((id, value) -> {
-                        HashMap<String, Object> data = new HashMap<>();
-                        data.put("id", id);
-                        data.put("data", value);
-                        storedData.add(data);
-                    });
+                    synchronized (subject.lock) {
+                        subject.getStoredData().forEach((id, value) -> {
+                            HashMap<String, Object> data = new HashMap<>();
+                            data.put("id", id);
+                            data.put("data", value);
+                            storedData.add(data);
+                        });
+                    }
                 }
             }
             storageNodeObject.put("storedData", storedData);

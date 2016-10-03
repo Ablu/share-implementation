@@ -9,6 +9,8 @@ public class StorageNodeSubject extends Subject {
     private int nodeId;
     private final HashMap<Integer, Object> storedData = new HashMap<>();
 
+    public final Object lock = new Object();
+
     @Override
     protected void init() {
     }
@@ -16,37 +18,39 @@ public class StorageNodeSubject extends Subject {
     @Override
     protected void onMessageReceived(Object message) {
         try {
-            if (message instanceof StoreDataInNodeMessage) {
-                StoreDataInNodeMessage storeMessage = (StoreDataInNodeMessage) message;
-                storedData.put(storeMessage.dataId, storeMessage.data);
-                emitChange();
-            } else if (message instanceof ConfirmLeaveMessage) {
-                if (!storedData.isEmpty()) {
-                    throw new IllegalStateException("still holding data while leave was confirmed!");
-                }
-                stopSubject();
-            } else if (message instanceof ConfirmJoinMessage) {
-                ConfirmJoinMessage confirmMessage = (ConfirmJoinMessage) message;
-                nodeId = confirmMessage.nodeId;
-                emitChange();
-            } else if (message instanceof DeleteDataFromNodeMessage) {
-                DeleteDataFromNodeMessage deleteMessage = (DeleteDataFromNodeMessage) message;
-                storedData.remove(deleteMessage.dataId);
-                emitChange();
-            } else if (message instanceof MoveMessage) {
-                MoveMessage moveMessage = (MoveMessage) message;
+            synchronized (lock) {
+                if (message instanceof StoreDataInNodeMessage) {
+                    StoreDataInNodeMessage storeMessage = (StoreDataInNodeMessage) message;
+                    storedData.put(storeMessage.dataId, storeMessage.data);
+                    emitChange();
+                } else if (message instanceof ConfirmLeaveMessage) {
+                    if (!storedData.isEmpty()) {
+                        throw new IllegalStateException("still holding data while leave was confirmed!");
+                    }
+                    stopSubject();
+                } else if (message instanceof ConfirmJoinMessage) {
+                    ConfirmJoinMessage confirmMessage = (ConfirmJoinMessage) message;
+                    nodeId = confirmMessage.nodeId;
+                    emitChange();
+                } else if (message instanceof DeleteDataFromNodeMessage) {
+                    DeleteDataFromNodeMessage deleteMessage = (DeleteDataFromNodeMessage) message;
+                    storedData.remove(deleteMessage.dataId);
+                    emitChange();
+                } else if (message instanceof MoveMessage) {
+                    MoveMessage moveMessage = (MoveMessage) message;
 
-                DataForwardMessage dataForwardMessage = new DataForwardMessage();
-                dataForwardMessage.dataId = moveMessage.dataId;
-                dataForwardMessage.data = storedData.remove(moveMessage.dataId);
-                moveMessage.target.send(dataForwardMessage);
-                emitChange();
-            } else if (message instanceof DataForwardMessage) {
-                DataForwardMessage forwardMessage = (DataForwardMessage) message;
-                storedData.put(forwardMessage.dataId, forwardMessage.data);
-                emitChange();
-            } else {
-                throw new IllegalStateException("Unexpected message: " + message);
+                    DataForwardMessage dataForwardMessage = new DataForwardMessage();
+                    dataForwardMessage.dataId = moveMessage.dataId;
+                    dataForwardMessage.data = storedData.remove(moveMessage.dataId);
+                    moveMessage.target.send(dataForwardMessage);
+                    emitChange();
+                } else if (message instanceof DataForwardMessage) {
+                    DataForwardMessage forwardMessage = (DataForwardMessage) message;
+                    storedData.put(forwardMessage.dataId, forwardMessage.data);
+                    emitChange();
+                } else {
+                    throw new IllegalStateException("Unexpected message: " + message);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
