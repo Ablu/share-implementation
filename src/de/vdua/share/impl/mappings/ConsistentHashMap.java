@@ -53,13 +53,13 @@ public class ConsistentHashMap<E> {
         double border = hash - aboveBorder;
         int borderIndex = (int) (border / this.inverseSize);
         if (borderIndex >= array.length)
-            return -1;
+            throw new IllegalStateException("borderIndex out of bounds");
         LinkedList<Integer> possibleIndices = this.array[borderIndex];
         for (Integer possibleIndex : possibleIndices) {
             if(intervals[possibleIndex].contains(hash)){
                 return possibleIndex;
             }
         }
-        return -1;
+        throw new IllegalStateException("unable to find interval which includes hash position");
     }
 }
