@@ -2,7 +2,6 @@ package de.vdua.share.impl.subjects;
 
 import de.vdua.share.impl.subjects.message.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class StorageNodeSubject extends Subject {
@@ -50,8 +49,7 @@ public class StorageNodeSubject extends Subject {
                 throw new IllegalStateException("Unexpected message: " + message);
             }
         } catch (Exception e) {
-            System.err.println(e.getMessage());
-            System.err.println(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
     }
 

@@ -5,7 +5,6 @@ import de.vdua.share.impl.entities.StorageNode;
 import de.vdua.share.impl.interfaces.IServer;
 import de.vdua.share.impl.subjects.message.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -111,8 +110,7 @@ public class ServerSubject extends Subject {
                 throw new IllegalStateException(errorMessage);
             }
         } catch (Exception e) {
-            System.err.println(e.getMessage());
-            System.err.println(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
     }
 

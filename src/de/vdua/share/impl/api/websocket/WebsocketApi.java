@@ -94,7 +94,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
             clientConnections.add(webSocket);
             sendUpdate();
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -103,7 +103,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
         try {
             clientConnections.remove(webSocket);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -178,8 +178,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     break;
             }
         } catch (Exception e) {
-            System.err.println(e.getMessage());
-            System.err.println(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
     }
 
