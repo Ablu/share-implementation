@@ -46,6 +46,7 @@ import {StorageNode} from "./entities/storagenode";
             </div>
             <div class="data">
                 <h2>Stored data:</h2>
+                <i *ngIf="storageNode.storedData.length === 0" >None...</i>
                 <md-card *ngFor="let data of storageNode.storedData">
                     <md-card-subtitle>{{data.id}}:</md-card-subtitle>
                     <md-card-content>
@@ -63,6 +64,7 @@ import {StorageNode} from "./entities/storagenode";
                 </md-list>-->
             </div>
             <div class="metadata">
+                <h2>Capacity:</h2>
                 <input #slider type="range" max="1" step="0.0001"
                     [(ngModel)]="storageNode.capacity" name="storageNode.capacity"
                     />

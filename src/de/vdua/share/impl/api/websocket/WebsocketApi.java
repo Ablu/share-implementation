@@ -36,6 +36,7 @@ public class WebsocketApi extends WebSocketServer implements Api {
 
     private HashMap<String, Object> getState() {
         HashMap<String, Object> tree = new HashMap<>();
+        tree.put("type", "state");
         tree.put("stretchFactor", serverSubject.getStretchFactor());
         ArrayList<HashMap<String, Object>> storageNodes = new ArrayList<>();
 
@@ -48,7 +49,8 @@ public class WebsocketApi extends WebSocketServer implements Api {
             ArrayList<HashMap<String, Object>> storedData = new ArrayList<>();
             for (StorageNodeSubject subject : storageNodeSubjects) {
                 if (subject.getNodeId() == node.getId()) {
-                    subject.getStoredData().forEach((id, value) -> {
+                    final HashMap<Integer, Object> listCopy = new HashMap<>(subject.getStoredData());
+                    listCopy.forEach((id, value) -> {
                         HashMap<String, Object> data = new HashMap<>();
                         data.put("id", id);
                         data.put("data", value);
@@ -172,6 +174,14 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     deleteMessage.dataId = dataIdToDelete;
                     serverSubject.send(deleteMessage);
                     break;
+                case "search":
+                    int dataIdToSearch = ((Double) message.get("id")).intValue();
+                    StorageNodeSubject node = serverSubject.search(dataIdToSearch);
+                    Object foundData = node.getStoredData().get(dataIdToSearch);
+                    FoundMessage foundMessage = new FoundMessage();
+                    foundMessage.data = foundData;
+                    foundMessage.dataId = dataIdToSearch;
+                    webSocket.send(gson.toJson(foundMessage));
                 default:
                     System.err.print("Received unknown command: ");
                     System.err.println(message);
@@ -185,5 +195,15 @@ public class WebsocketApi extends WebSocketServer implements Api {
     @Override
     public void onError(WebSocket webSocket, Exception e) {
         System.out.println("on error");
+    }
+
+    private class FoundMessage {
+        private Object data;
+        private int dataId;
+
+        private final String type = "foundMessage";
+
+        FoundMessage() {
+        }
     }
 }

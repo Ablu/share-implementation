@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject }    from 'rxjs/Subject';
 import {StorageNode} from "./entities/storagenode";
+import {FindResult} from "./entities/foundresult";
 
 @Injectable()
 export class ShareService {
@@ -20,6 +21,9 @@ export class ShareService {
     private stretchFactorUpdated = new Subject<number>();
     strechFactorUpdatedSource$ = this.stretchFactorUpdated.asObservable();
 
+    private dataFound = new Subject<FindResult>()
+    dataFoundSource$ = this.dataFound.asObservable();
+
     constructor() {
         this.createWebsocketConnection();
         setInterval(() => {
@@ -38,7 +42,21 @@ export class ShareService {
     }
 
     private onMessage(message: MessageEvent) {
-        let state = JSON.parse(message.data);
+        let message = JSON.parse(message.data);
+
+        switch (message.type) {
+            case "state":
+                this.handleState(message);
+                break;
+            case "foundMessage":
+                this.handleFoundMessage(message);
+                break;
+            default:
+                console.error("unknown message:", message)
+        }
+    }
+
+    private handleState(state) {
         this.stretchFactorUpdated.next(state.stretchFactor);
 
         let receivedStorageNodes = state.storageNodes;
@@ -60,6 +78,10 @@ export class ShareService {
                 this.storageNodes.delete(id);
             }
         }
+    }
+
+    private handleFoundMessage(message) {
+        this.dataFound.next(message);
     }
 
     private send(obj) {
@@ -100,10 +122,17 @@ export class ShareService {
         })
     }
 
-    deleteData(id: number) {
+    public deleteData(id: number) {
         this.send({
             command: 'deleteData',
             id: id,
+        })
+    }
+
+    public search(idToSearch: number) {
+        this.send({
+            command: 'search',
+            id: idToSearch,
         })
     }
 }

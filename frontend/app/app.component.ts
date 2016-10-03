@@ -29,6 +29,8 @@ import {StorageNode} from "./entities/storagenode";
             <span class="spacer"></span>
             <stretch-factor-edit [storageNodes]="storageNodes"></stretch-factor-edit>
             <span class="spacer"></span>
+            <search></search>
+            <span class="spacer"></span>
             <interval-updater [storageNodes]="storageNodes"></interval-updater>
         </div>
         <div>

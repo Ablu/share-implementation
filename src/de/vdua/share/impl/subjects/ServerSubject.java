@@ -126,4 +126,8 @@ public class ServerSubject extends Subject {
     public double getStretchFactor() {
         return server.getStretchFactor();
     }
+
+    public StorageNodeSubject search(int dataIdToSearch) {
+        return storageNodeSubjects.get(server.getStorageNodeResponsibleForStoring(dataIdToSearch).getId());
+    }
 }
