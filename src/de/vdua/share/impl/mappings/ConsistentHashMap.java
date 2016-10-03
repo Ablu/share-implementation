@@ -15,13 +15,13 @@ public class ConsistentHashMap<E> {
     private E[] mappedElements;
 
     private double inverseSize;
-    private LinkedList<Integer>[] array;
+    private LinkedList<Integer>[] possibleIndicesByBorderIndex;
 
-    ConsistentHashMap(Interval[] intervals, E[] mappedElements, LinkedList<Integer>[] array) {
+    ConsistentHashMap(Interval[] intervals, E[] mappedElements, LinkedList<Integer>[] possibleIndicesByBorderIndex) {
         this.intervals = intervals;
         this.mappedElements = mappedElements;
         this.inverseSize = 1 / (double) mappedElements.length;
-        this.array = array;
+        this.possibleIndicesByBorderIndex = possibleIndicesByBorderIndex;
     }
 
     public int getSize() {
@@ -55,9 +55,9 @@ public class ConsistentHashMap<E> {
         double aboveBorder = hash % this.inverseSize;
         double border = hash - aboveBorder;
         int borderIndex = (int) Math.round(border / this.inverseSize);
-        if (borderIndex >= array.length)
+        if (borderIndex >= possibleIndicesByBorderIndex.length)
             throw new IllegalStateException("borderIndex out of bounds");
-        LinkedList<Integer> possibleIndices = this.array[borderIndex];
+        LinkedList<Integer> possibleIndices = this.possibleIndicesByBorderIndex[borderIndex];
         for (Integer possibleIndex : possibleIndices) {
             if(intervals[possibleIndex].contains(hash)){
                 return possibleIndex;
