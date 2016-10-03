@@ -54,7 +54,7 @@ public class ConsistentHashMap<E> {
     public int getElementIndex(double hash) {
         double aboveBorder = hash % this.inverseSize;
         double border = hash - aboveBorder;
-        int borderIndex = (int) (border / this.inverseSize);
+        int borderIndex = (int) Math.round(border / this.inverseSize);
         if (borderIndex >= array.length)
             throw new IllegalStateException("borderIndex out of bounds");
         LinkedList<Integer> possibleIndices = this.array[borderIndex];
