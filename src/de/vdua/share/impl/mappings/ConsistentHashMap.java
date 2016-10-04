@@ -5,11 +5,7 @@ import de.vdua.share.impl.interfaces.DoubleHashable;
 
 import java.util.LinkedList;
 
-/**
- * Created by postm on 06-Sep-16.
- */
 public class ConsistentHashMap<E> {
-
 
     private Interval[] intervals;
     private E[] mappedElements;

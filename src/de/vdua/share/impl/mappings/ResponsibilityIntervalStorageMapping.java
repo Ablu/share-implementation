@@ -5,9 +5,6 @@ import de.vdua.share.impl.entities.Interval;
 import de.vdua.share.impl.entities.Tuple;
 import de.vdua.share.impl.interfaces.DoubleHashable;
 
-/**
- * Created by postm on 18-Aug-16.
- */
 public class ResponsibilityIntervalStorageMapping extends Tuple<Interval, StorageNode> implements DoubleHashable{
 
     public ResponsibilityIntervalStorageMapping(Interval t1, StorageNode t2) {

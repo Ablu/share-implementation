@@ -8,9 +8,6 @@ import java.util.LinkedList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-/**
- * Created by postm on 06-Sep-16.
- */
 public class StorageNodeCHMFactory extends ConsistentHashMapFactory<LinkedList<ResponsibilityIntervalStorageMapping>> {
 
     public StorageNodeCHMFactory(HashSet<StorageNode> storageNodesP, boolean useVerification) {

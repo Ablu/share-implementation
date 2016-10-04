@@ -130,14 +130,12 @@ public class WebsocketApi extends WebSocketServer implements Api {
                     break;
                 case "storeData":
                     String data = (String) message.get("data");
-                    System.out.println("Storing data '" + data + "'!");
                     StoreDataMessage storeMessage = new StoreDataMessage();
                     storeMessage.data = data;
                     serverSubject.send(storeMessage);
                     break;
                 case "updateCapacities":
                     ArrayList<LinkedTreeMap> capacities = (ArrayList<LinkedTreeMap>) message.get("capacities");
-                    System.out.println("Updating capacities: " + capacities);
 
                     HashMap<StorageNode, Double> newCapacities = new HashMap<>();
                     for (LinkedTreeMap capacity : capacities) {

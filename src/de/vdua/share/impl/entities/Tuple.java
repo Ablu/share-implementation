@@ -1,8 +1,5 @@
 package de.vdua.share.impl.entities;
 
-/**
- * Created by postm on 18-Aug-16.
- */
 public class Tuple<T,E> {
     private T t1;
     private E t2;

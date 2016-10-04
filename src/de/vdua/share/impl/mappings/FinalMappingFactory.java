@@ -6,9 +6,6 @@ import de.vdua.share.impl.entities.Interval;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
-/**
- * Created by postm on 06-Sep-16.
- */
 public class FinalMappingFactory extends ConsistentHashMapFactory<ConsistentHashMap<StorageNode>> {
 
     public FinalMappingFactory(StorageNodeCHMFactory firstMapping, boolean useVerification) {

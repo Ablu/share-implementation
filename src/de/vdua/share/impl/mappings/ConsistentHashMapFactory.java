@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
 
-/**
- * Created by postm on 06-Sep-16.
- */
 public class ConsistentHashMapFactory<E> {
 
     private final boolean useVerification;

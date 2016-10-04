@@ -5,9 +5,6 @@ import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-/**
- * Created by postm on 17-Aug-16.
- */
 public class Interval {
 
     public static final Interval NULL_INSTANCE = new Interval(0.0, 0.0, false, false);

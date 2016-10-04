@@ -1,8 +1,5 @@
 package de.vdua.share.impl.interfaces;
 
-/**
- * Created by postm on 16-Sep-16.
- */
 public interface DoubleHashable {
 
     default double getHashAsDouble() {

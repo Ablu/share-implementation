@@ -11,9 +11,6 @@ import de.vdua.share.impl.mappings.StorageNodeCHMFactory;
 
 import java.util.*;
 
-/**
- * Created by postm on 17-Aug-16.
- */
 public class Server extends AbstractServer implements IServer {
 
     private final HashSet<StorageNode> storageNodes = new HashSet<StorageNode>();

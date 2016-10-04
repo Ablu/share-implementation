@@ -5,9 +5,6 @@ import de.vdua.share.impl.interfaces.DoubleHashable;
 import java.math.BigDecimal;
 import java.util.*;
 
-/**
- * Created by postm on 17-Aug-16.
- */
 public class StorageNode extends AbstractEntity implements DoubleHashable {
 
     private final int id;
@@ -44,7 +41,6 @@ public class StorageNode extends AbstractEntity implements DoubleHashable {
     private Interval genInterval(double capacity, double stretchFactor) {
         double hash = this.getHashAsDouble(); //TODO use other hashing mechanic
         double extendedHash = hash + (stretchFactor * capacity);
-        System.err.println("genInterval(" + hash + ", " + extendedHash + " )");
         return new Interval(hash, extendedHash);
     }
 
