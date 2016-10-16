@@ -7,7 +7,7 @@ mvn package
 sudo mkdir -p /opt/share
 sudo cp target/share-0.0.1-jar-with-dependencies.jar /opt/share/share.jar
 
-cat > /etc/systemd/share.service <<EOL
+sudo cat > /etc/systemd/share.service <<EOL
 Description=SHARE service
 
 [Service]
@@ -18,5 +18,5 @@ User=solum
 WantedBy=multi-user.target
 EOL
 
-systemctl enable /etc/systemd/share.service
+sudo systemctl enable /etc/systemd/share.service
 
