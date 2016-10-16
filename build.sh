@@ -3,7 +3,7 @@
 set -e
 
 # Install java 1.8
-yum install -y java-1.8.0-openjdk-headless
+sudo yum install -y java-1.8.0-openjdk-devel
 
 sudo yum install -y maven
 mvn package
@@ -15,7 +15,6 @@ Description=SHARE service
 
 [Service]
 ExecStart=/usr/bin/java -jar /opt/share/share.jar
-User=solum
 
 [Install]
 WantedBy=multi-user.target
